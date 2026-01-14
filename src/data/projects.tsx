@@ -27,7 +27,9 @@ import {
   SiTypescript,
   SiVuedotjs,
 } from "react-icons/si";
-import { TbBrandFramerMotion } from "react-icons/tb";
+import { TbBrandFramerMotion } from "react-icons/tb"; 
+import { SkillNames } from "./constants"; 
+
 const BASE_PATH = "/assets/projects-screenshots";
 
 const ProjectsLinks = ({ live, repo }: { live: string; repo?: string }) => {
@@ -67,18 +69,14 @@ export type Skill = {
   fg: string;
   icon: ReactNode;
 };
+
 const PROJECT_SKILLS = {
+  // Technical Skills
   next: {
     title: "Next.js",
     bg: "black",
     fg: "white",
     icon: <RiNextjsFill />,
-  },
-  chakra: {
-    title: "Chakra UI",
-    bg: "black",
-    fg: "white",
-    icon: <SiChakraui />,
   },
   node: {
     title: "Node.js",
@@ -91,12 +89,6 @@ const PROJECT_SKILLS = {
     bg: "black",
     fg: "white",
     icon: <SiPython />,
-  },
-  prisma: {
-    title: "prisma",
-    bg: "black",
-    fg: "white",
-    icon: <SiPrisma />,
   },
   postgres: {
     title: "PostgreSQL",
@@ -116,23 +108,11 @@ const PROJECT_SKILLS = {
     fg: "white",
     icon: <SiExpress />,
   },
-  reactQuery: {
-    title: "React Query",
-    bg: "black",
-    fg: "white",
-    icon: <SiReactquery />,
-  },
   shadcn: {
     title: "ShanCN UI",
     bg: "black",
     fg: "white",
     icon: <SiShadcnui />,
-  },
-  aceternity: {
-    title: "Aceternity",
-    bg: "black",
-    fg: "white",
-    icon: <AceTernityLogo />,
   },
   tailwind: {
     title: "Tailwind",
@@ -146,45 +126,11 @@ const PROJECT_SKILLS = {
     fg: "white",
     icon: <SiDocker />,
   },
-  yjs: {
-    title: "Y.js",
-    bg: "black",
-    fg: "white",
-    icon: (
-      <span>
-        <strong>Y</strong>js
-      </span>
-    ),
-  },
-  firebase: {
-    title: "Firebase",
-    bg: "black",
-    fg: "white",
-    icon: <SiFirebase />,
-  },
-  sockerio: {
-    title: "Socket.io",
-    bg: "black",
-    fg: "white",
-    icon: <SiSocketdotio />,
-  },
-  js: {
-    title: "JavaScript",
-    bg: "black",
-    fg: "white",
-    icon: <SiJavascript />,
-  },
   ts: {
     title: "TypeScript",
     bg: "black",
     fg: "white",
     icon: <SiTypescript />,
-  },
-  vue: {
-    title: "Vue.js",
-    bg: "black",
-    fg: "white",
-    icon: <SiVuedotjs />,
   },
   react: {
     title: "React.js",
@@ -192,37 +138,114 @@ const PROJECT_SKILLS = {
     fg: "white",
     icon: <RiReactjsFill />,
   },
-  sanity: {
-    title: "Sanity",
-    bg: "black",
+
+  // CX Platforms & Tools
+  zendesk: {
+    title: "Zendesk",
+    bg: "#03363d",
     fg: "white",
-    icon: <SiSanity />,
+    icon: <span className="text-white font-bold">ZD</span>,
   },
-  spline: {
-    title: "Spline",
-    bg: "black",
+  crisp: {
+    title: "Crisp",
+    bg: "#22c55e",
     fg: "white",
-    icon: <SiThreedotjs />,
+    icon: <span className="text-white font-bold">CR</span>,
   },
-  gsap: {
-    title: "GSAP",
-    bg: "black",
+  n8n: {
+    title: "n8n",
+    bg: "#ea580c",
     fg: "white",
-    icon: "",
+    icon: <span className="text-white font-bold">n8n</span>,
   },
-  framerMotion: {
-    title: "Framer Motion",
-    bg: "black",
+  aiAgents: {
+    title: "AI Agents",
+    bg: "#6366f1",
     fg: "white",
-    icon: <TbBrandFramerMotion />,
+    icon: <span className="text-white font-bold">AI</span>,
   },
-  supabase: {
-    title: "Supabase",
-    bg: "black",
+  googleWorkspace: {
+    title: "Google Workspace",
+    bg: "#4285f4",
     fg: "white",
-    icon: <SiSupabase />,
+    icon: <span className="text-white font-bold">GW</span>,
+  },
+  msOffice: {
+    title: "MS Office",
+    bg: "#d83b01",
+    fg: "white",
+    icon: <span className="text-white font-bold">MS</span>,
+  },
+  slack: {
+    title: "Slack",
+    bg: "#4a154b",
+    fg: "white",
+    icon: <span className="text-white font-bold">SL</span>,
+  },
+  clickup: {
+    title: "ClickUp",
+    bg: "#7b68ee",
+    fg: "white",
+    icon: <span className="text-white font-bold">CU</span>,
+  },
+  zoom: {
+    title: "Zoom",
+    bg: "#2d8cff",
+    fg: "white",
+    icon: <span className="text-white font-bold">ZO</span>,
+  },
+  canva: {
+    title: "Canva",
+    bg: "#00C4CC",
+    fg: "white",
+    icon: <span className="text-white font-bold">CA</span>,
+  },
+
+  // CX Concepts
+  csatNps: {
+    title: "CSAT & NPS",
+    bg: "#059669",
+    fg: "white",
+    icon: <span className="text-white font-bold">CN</span>,
+  },
+  slaManagement: {
+    title: "SLA Management",
+    bg: "#dc2626",
+    fg: "white",
+    icon: <span className="text-white font-bold">SL</span>,
+  },
+  processAutomation: {
+    title: "Process Automation",
+    bg: "#7c3aed",
+    fg: "white",
+    icon: <span className="text-white font-bold">PA</span>,
+  },
+  teamLeadership: {
+    title: "Team Leadership",
+    bg: "#0f172a",
+    fg: "white",
+    icon: <span className="text-white font-bold">TL</span>,
+  },
+  crossFunctional: {
+    title: "Cross-functional",
+    bg: "#6b21a8",
+    fg: "white",
+    icon: <span className="text-white font-bold">CF</span>,
+  },
+  clientOnboarding: {
+    title: "Client Onboarding",
+    bg: "#4f46e5",
+    fg: "white",
+    icon: <span className="text-white font-bold">CO</span>,
+  },
+  customerSatisfaction: {
+    title: "Customer Satisfaction",
+    bg: "#15803d",
+    fg: "white",
+    icon: <span className="text-white font-bold">CS</span>,
   },
 };
+
 export type Project = {
   id: string;
   category: string;
@@ -234,468 +257,305 @@ export type Project = {
   github?: string;
   live: string;
 };
+
 const projects: Project[] = [
   {
-    id: "codingducks",
-    category: "Coding platform",
-    title: "Coding Ducks",
-    src: "/assets/projects-screenshots/codingducks/landing.png",
-    screenshots: ["landing.png"],
+    id: "priyo-pay-cx",
+    category: "Fintech CX Leadership",
+    title: "Priyo Pay - CX Operations Transformation",
+    src: "/assets/projects-screenshots/priyo-pay/landing.png",
+    screenshots: ["dashboard.png", "automation.png", "metrics.png"],
     skills: {
       frontend: [
-        PROJECT_SKILLS.ts,
-        PROJECT_SKILLS.next,
-        PROJECT_SKILLS.chakra,
-        PROJECT_SKILLS.reactQuery,
-        PROJECT_SKILLS.firebase,
+        PROJECT_SKILLS.zendesk,
+        PROJECT_SKILLS.crisp,
+        PROJECT_SKILLS.n8n,
+        PROJECT_SKILLS.aiAgents,
       ],
       backend: [
-        PROJECT_SKILLS.node,
-        PROJECT_SKILLS.express,
-        PROJECT_SKILLS.prisma,
-        PROJECT_SKILLS.python,
-        PROJECT_SKILLS.postgres,
-        PROJECT_SKILLS.sockerio,
+        PROJECT_SKILLS.csatNps,
+        PROJECT_SKILLS.slaManagement,
+        PROJECT_SKILLS.processAutomation,
+        PROJECT_SKILLS.teamLeadership,
       ],
     },
-    live: "https://www.codingducks.xyz/",
-    github: "https://github.com/Naresh-Khatri/Coding-Ducks",
+    live: "https://pay.priyo.com/",
     get content() {
       return (
         <div>
           <TypographyP className="font-mono text-2xl text-center">
-            Coding ducks = LeetCode + CodePen + CSS Battles
+            Leading CX Operations for Cross-Border Payment Platform
           </TypographyP>
-          <TypographyP className="font-mono ">
-            Coding Ducks is your coding dojo — where you level up your skills,
-            battle in real-time code duels, and earn badges like a true code
-            warrior. Track your progress, flex your brain, and climb the
-            leaderboard. Ready to quack the code?
+          <TypographyP className="font-mono">
+            Transformed customer experience operations for thousands of freelancers 
+            and businesses handling international payments through strategic automation 
+            and data-driven CX frameworks.
           </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-          <TypographyH3 className="my-4 mt-8">Problems </TypographyH3>
+          <ProjectsLinks live={this.live} />
+          
+          <TypographyH3 className="my-4 mt-8">AI-Powered Automation</TypographyH3>
           <p className="font-mono mb-2">
-            Solve coding problems similar to LeetCode, enhancing your
-            problem-solving skills across various languages.
+            Implemented RAG-based AI Agent + n8n automations reducing manual handling 
+            by 50-70% and improving ticket resolution time from 24 hours to under 1 hour.
           </p>
           <SlideShow
             images={[
-              `${BASE_PATH}/codingducks/problems.png`,
-              `${BASE_PATH}/codingducks/problem.png`,
+              `${BASE_PATH}/priyo-pay/automation-1.png`,
+              `${BASE_PATH}/priyo-pay/automation-2.png`,
             ]}
           />
-          <TypographyH3 className="my-4 mt-8">Ducklets</TypographyH3>
-          <p className="font-mono mb-2">
-            Collaborate in real-time with others in a multiplayer coding
-            environment, just like CodePen but with a social twist.
-          </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/codingducks/ducklets.png`,
-              `${BASE_PATH}/codingducks/ducklet1.png`,
-              `${BASE_PATH}/codingducks/ducklet2.png`,
-            ]}
-          />
-          <TypographyH3 className="my-4 mt-8">UI Battles </TypographyH3>
 
+          <TypographyH3 className="my-4 mt-8">KPI Framework & Analytics</TypographyH3>
           <p className="font-mono mb-2">
-            Challenge yourself to create UI components with HTML/CSS/JS, and get
-            instant feedback with an automated similarity scoring.
+            Built comprehensive KPI framework tracking CSAT, SLA compliance, backlog 
+            management, and churn risk with real-time dashboards and performance insights.
           </p>
           <SlideShow
             images={[
-              `${BASE_PATH}/codingducks/css-battles.png`,
-              `${BASE_PATH}/codingducks/css-battle.png`,
-              `${BASE_PATH}/codingducks/css-battle2.png`,
+              `${BASE_PATH}/priyo-pay/dashboard-1.png`,
+              `${BASE_PATH}/priyo-pay/metrics-1.png`,
             ]}
           />
-          <TypographyH3 className="my-4 mt-8">Contests </TypographyH3>
-          <p className="font-mono mb-2">
-            Organize or participate in coding competitions. Successfully used to
-            host three contests during college.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/codingducks/contests.png`]} />
-          <TypographyH3 className="my-4 mt-8">Playground </TypographyH3>
-          <p className="font-mono mb-2">
-            Test and execute your code instantly in my versatile online code
-            runner.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/codingducks/playground.png`]} />
-          <TypographyH3 className="my-4 mt-8">Users</TypographyH3>
 
+          <TypographyH3 className="my-4 mt-8">Multi-Platform Support</TypographyH3>
           <p className="font-mono mb-2">
-            Track your progress, earn badges, and climb the rankings with
-            detailed user profiles and activity tracking.
+            Managed Zendesk + Crisp for ticket handling and live chat with quality 
+            standards boosting trust and reducing escalations by 40%.
           </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/codingducks/users.png`,
-              `${BASE_PATH}/codingducks/user.png`,
-            ]}
-          />
+          <SlideShow images={[`${BASE_PATH}/priyo-pay/support-platforms.png`]} />
+
+          <TypographyH3 className="my-4 mt-8">Compliance & Risk Management</TypographyH3>
+          <p className="font-mono mb-2">
+            Coordinated with Product, Risk, and Compliance teams on KYC/AML cases 
+            maintaining 95%+ SLA and resolution compliance.
+          </p>
+          <SlideShow images={[`${BASE_PATH}/priyo-pay/compliance.png`]} />
         </div>
       );
     },
   },
   {
-    id: "couponluxury",
-    category: "Coupon site",
-    title: "Coupon Luxury",
-    src: "/assets/projects-screenshots/couponluxury/landing.png",
-    screenshots: ["1.png", "2.png", "3.png", "4.png", "5.png"],
-    live: "https://www.couponluxury.com/",
+    id: "lc-ecommerce-operations",
+    category: "E-commerce Operations",
+    title: "LC Ecommerce - Client Experience Management",
+    src: "/assets/projects-screenshots/lc-ecommerce/landing.png",
+    screenshots: ["onboarding.png", "analytics.png", "crm.png"],
     skills: {
       frontend: [
-        PROJECT_SKILLS.js,
-        PROJECT_SKILLS.next,
-        PROJECT_SKILLS.chakra,
-        PROJECT_SKILLS.vue,
+        PROJECT_SKILLS.googleWorkspace,
+        PROJECT_SKILLS.msOffice,
+        PROJECT_SKILLS.canva,
       ],
       backend: [
-        PROJECT_SKILLS.node,
-        PROJECT_SKILLS.express,
-        PROJECT_SKILLS.prisma,
-        PROJECT_SKILLS.postgres,
-        PROJECT_SKILLS.docker,
+        PROJECT_SKILLS.clientOnboarding,
+        PROJECT_SKILLS.crossFunctional,
+        PROJECT_SKILLS.customerSatisfaction,
       ],
     },
-    get content(): JSX.Element {
+    live: "https://lc-ecommerce.com/",
+    get content() {
       return (
         <div>
-          <TypographyP className="font-mono ">
-            CouponLuxury is your go-to destination for snagging the best deals
-            without lifting a finger. Whether you&apos;re hunting for the latest
-            discounts or trying to save a buck at your favorite stores,
-            CouponLuxury&apos;s got you covered.
+          <TypographyP className="font-mono text-2xl text-center">
+            End-to-End Client & Seller Experience Management
           </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-          <p className="font-mono mb-2 mt-4">
-            As soon as you land, boom! You&apos;re greeted with the freshest
-            coupons and top-tier deals that&apos;ll make your wallet happy.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/couponluxury/landing.png`]} />
-          <TypographyH3 className="my-4 ">Stores</TypographyH3>
-          <p className="font-mono mb-2">
-            Dive into a comprehensive list of stores, each packed with exclusive
-            deals and discounts. It&apos;s like having a VIP pass to every sale
-            in town.
-          </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/couponluxury/stores.png`,
-              `${BASE_PATH}/couponluxury/store.png`,
-            ]}
-          />
-          <TypographyH3 className="my-4 mt-8">Categories</TypographyH3>
+          <TypographyP className="font-mono">
+            Managed comprehensive client onboarding, relationship management, and 
+            account optimization for e-commerce platform achieving significant 
+            retention and revenue growth.
+          </TypographyP>
+          <ProjectsLinks live={this.live} />
 
+          <TypographyH3 className="my-4 mt-8">Client Onboarding Excellence</TypographyH3>
           <p className="font-mono mb-2">
-            Whatever you&apos;re into—fashion, tech, food—you&apos;ll find it
-            neatly organized here. No more endless scrolling; just pick a
-            category and get the best offers instantly.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/couponluxury/categories.png`]} />
-          <TypographyH3 className="my-4 mt-8">Custom CMS </TypographyH3>
-          <p className="font-mono mb-2">
-            Powered by Vue.js, this bad boy allows us to keep the content
-            dynamic and up-to-date. From flash sales to limited-time offers, my
-            CMS ensures everything&apos;s live and relevant.
+            Designed and implemented streamlined onboarding processes ensuring 
+            100% compliance while reducing setup time by 35%.
           </p>
           <SlideShow
             images={[
-              `${BASE_PATH}/couponluxury/cms-1.png`,
-              `${BASE_PATH}/couponluxury/cms-2.png`,
+              `${BASE_PATH}/lc-ecommerce/onboarding-1.png`,
+              `${BASE_PATH}/lc-ecommerce/onboarding-2.png`,
             ]}
           />
-          <p className="font-mono mb-2 mt-5">
-            Plus, I&apos;ve sprinkled in some extra magic like personalized
-            deal recommendations, user-friendly search features, and a sleek,
-            responsive design that works like a charm on any device.
-          </p>
+
+          <TypographyH3 className="my-4 mt-8">Performance Optimization</TypographyH3>
           <p className="font-mono mb-2">
-            CouponLuxury isn&apos;t just a website; it&apos;s your personal deal-hunting
-            assistant, ensuring you never miss out on a bargain!
+            Data-driven performance improvements increased task efficiency by 35% 
+            while maintaining ≥30% profit margins.
           </p>
-          {/* <TypographyP className="my-4 mt-8">
-          <strong>Misc:</strong>
-          Hosted not one, not two, but THREE coding contests (Codemacha) during
-          college. Safe to say, Coding Ducks passed the vibe check.
-        </TypographyP>
-        <TypographyP className="my-4 mt-8">
-          <strong>Target Audience:</strong>
-          For all the novice coders out there ready to make their mark.
-        </TypographyP> */}
+          <SlideShow
+            images={[
+              `${BASE_PATH}/lc-ecommerce/analytics-1.png`,
+              `${BASE_PATH}/lc-ecommerce/analytics-2.png`,
+            ]}
+          />
+
+          <TypographyH3 className="my-4 mt-8">Relationship Management</TypographyH3>
+          <p className="font-mono mb-2">
+            Primary point of contact resolving inquiries and driving long-term partnerships 
+            resulting in 20-25% uplift in retention and repeat business.
+          </p>
+          <SlideShow images={[`${BASE_PATH}/lc-ecommerce/crm-dashboard.png`]} />
+
+          <TypographyH3 className="my-4 mt-8">Cross-functional Coordination</TypographyH3>
+          <p className="font-mono mb-2">
+            Monitored KPIs and delivered actionable performance reports across 
+            departments ensuring seamless operations.
+          </p>
+          <SlideShow images={[`${BASE_PATH}/lc-ecommerce/reports.png`]} />
         </div>
       );
     },
   },
   {
-    id: "the-booking-desk",
-    category: "Travel",
-    title: "The Booking Desk",
-    src: "/assets/projects-screenshots/the-booking-desk/landing.png",
-    screenshots: ["1.png"],
-    live: "https://thebookingdesk.com/",
+    id: "ostad-cx-transformation",
+    category: "EdTech CX Leadership",
+    title: "Ostad Ltd. - Learner Experience Transformation",
+    src: "/assets/projects-screenshots/ostad/landing.png",
+    screenshots: ["engagement.png", "framework.png", "team.png"],
     skills: {
       frontend: [
-        PROJECT_SKILLS.ts,
-        PROJECT_SKILLS.next,
-        PROJECT_SKILLS.aceternity,
-        PROJECT_SKILLS.tailwind,
+        PROJECT_SKILLS.zendesk,
+        PROJECT_SKILLS.slack,
+        PROJECT_SKILLS.clickup,
       ],
-      backend: [PROJECT_SKILLS.sanity],
-    },
-    get content() {
-      return (
-        <div>
-          <TypographyP className="font-mono ">
-            The Booking Desk is your ultimate travel consultation hub, designed
-            to turn your wanderlust dreams into reality. With a focus on smooth
-            and visually captivating animations, navigating the site feels like
-            a breeze—it&apos;s almost as if the destinations are calling you.
-          </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-          <p className="font-mono mb-2 mt-8">
-            A sleek, modern interface greets you, featuring the latest travel
-            tips, deals, and must-visit spots around the globe.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/the-booking-desk/landing.png`]} />
-          <TypographyH3 className="my-4 mt-8">Blogs</TypographyH3>
-          <p className="font-mono mb-2">
-            Dive into the curated articles written by travel experts. Whether
-            you&apos;re looking for hidden gems or travel hacks, our blog section has
-            you covered.
-          </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/the-booking-desk/blogs.png`,
-              `${BASE_PATH}/the-booking-desk/blog.png`,
-            ]}
-          />
-          <TypographyH3 className="my-4 mt-8">Sanity CMS</TypographyH3>
-
-          <p className="font-mono mb-2">
-            Keeping everything fresh and up-to-date, I&apos;ve integrated Sanity CMS
-            to manage all the content with ease, ensuring you always get the
-            latest and greatest information.
-          </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/the-booking-desk/cms-1.png`,
-              `${BASE_PATH}/the-booking-desk/cms-2.png`,
-            ]}
-          />
-          <p className="font-mono mb-2 my-8">
-            With a stunning 100% score on Lighthouse, The Booking Desk isn&apos;t
-            just beautiful—it&apos;s built to perform. Whether you&apos;re planning your
-            next adventure or just daydreaming, our site delivers a top-notch
-            experience that&apos;s both informative and enjoyable.
-          </p>
-        </div>
-      );
-    },
-  },
-  {
-    id: "portfolio",
-    category: "Portfolio",
-    title: "My Portfolio",
-    src: "/assets/projects-screenshots/portfolio/landing.png",
-    screenshots: ["1.png"],
-    live: "http://nareshkhatri.vercel.app",
-    github:"https://github.com/Naresh-Khatri/Portfolio",
-    skills: {
-      frontend: [
-        PROJECT_SKILLS.ts,
-        PROJECT_SKILLS.next,
-        PROJECT_SKILLS.shadcn,
-        PROJECT_SKILLS.aceternity,
-        PROJECT_SKILLS.framerMotion,
-        PROJECT_SKILLS.tailwind,
-        PROJECT_SKILLS.spline,
-      ],
-      backend: [],
-    },
-    get content() {
-      return (
-        <div>
-          <TypographyP className="font-mono ">
-            Welcome to my digital playground, where creativity meets code in the
-            dopest way possible.
-          </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-          <TypographyH3 className="my-4 mt-8">
-            Beautiful 3D Objects{" "}
-          </TypographyH3>
-          <p className="font-mono mb-2">
-            Did you see that 3D keyboard modal? Yeah! I made that. That
-            interactive keyboard is being rendered in 3D on a webpage 🤯, and
-            pressing each keycap reveals a skill in a goofy way. It&apos;s like
-            typing, but make it art.
-          </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/portfolio/landing.png`,
-              `${BASE_PATH}/portfolio/skills.png`,
-            ]}
-          />
-          <TypographyH3 className="my-4 ">Space Theme</TypographyH3>
-          <p className="font-mono mb-2">
-            Dark background + floating particles = out-of-this-world cool.
-          </p>
-          <SlideShow images={[`${BASE_PATH}/portfolio/navbar.png`]} />
-          <TypographyH3 className="my-4 mt-8">Projects</TypographyH3>
-
-          <p className="font-mono mb-2">
-            My top personal and freelance projects — no filler, all killer.
-          </p>
-          <SlideShow
-            images={[
-              `${BASE_PATH}/portfolio/projects.png`,
-              `${BASE_PATH}/portfolio/project.png`,
-            ]}
-          />
-          <p className="font-mono mb-2 mt-8 text-center">
-            This site&apos;s not just a portfolio — it&apos;s a whole vibe.
-          </p>
-        </div>
-      );
-    },
-  },
-  {
-    id: "ghostchat",
-    category: "Anonymous chat",
-    title: "GhostChat",
-    src: "/assets/projects-screenshots/ghostchat/1.png",
-    screenshots: ["1.png", "2.png", "3.png", "4.png"],
-    live: "https://ghostchat.vercel.app",
-    github:"https://github.com/Naresh-Khatri/GhostChat",
-    skills: {
-      frontend: [PROJECT_SKILLS.js, PROJECT_SKILLS.next, PROJECT_SKILLS.chakra],
-      backend: [PROJECT_SKILLS.supabase],
-    },
-    get content() {
-      return (
-        <div>
-          <TypographyP className="font-mono ">
-            Ghostchat is your go-to spot for sending anonymous messages without
-            leaving a trace. Powered by Supabase, it&apos;s all about keeping things
-            low-key and secure. Whether you&apos;re sharing secrets, giving feedback,
-            or just having some fun, Ghostchat ensures your identity stays
-            hidden, while your voice is heard. Say what you want, without the
-            worry.
-          </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-          <SlideShow
-            images={[
-              `${BASE_PATH}/ghostchat/1.png`,
-              `${BASE_PATH}/ghostchat/2.png`,
-              `${BASE_PATH}/ghostchat/3.png`,
-              `${BASE_PATH}/ghostchat/4.png`,
-            ]}
-          />
-        </div>
-      );
-    },
-  },
-  {
-    id: "jra",
-    category: "Result analyzer",
-    title: "JNTUA Results Analyzer",
-    src: "/assets/projects-screenshots/jra/1.png",
-    screenshots: ["1.png"],
-    live: "https://naresh-khatri.github.io/JNTUA-result-analyser-spa/#/",
-    skills: {
-      frontend: [PROJECT_SKILLS.js, PROJECT_SKILLS.vue],
       backend: [
-        PROJECT_SKILLS.node,
-        PROJECT_SKILLS.mongo,
-        PROJECT_SKILLS.express,
-        PROJECT_SKILLS.docker,
+        PROJECT_SKILLS.teamLeadership,
+        PROJECT_SKILLS.csatNps,
+        PROJECT_SKILLS.processAutomation,
       ],
     },
+    live: "https://ostad.app/",
     get content() {
       return (
         <div>
-          <TypographyP className="font-mono ">
-            JNTUA Results Analyzer was a revolutionary tool designed to simplify
-            and enhance the experience of accessing academic results. It served
-            as a powerful proxy between the JNTUA university results website and
-            its users, offering a range of features that made result analysis
-            faster and more efficient. Here&apos;s what made it stand out:
+          <TypographyP className="font-mono text-2xl text-center">
+            Transforming Learner Experience at Scale
           </TypographyP>
-          <ProjectsLinks live={this.live} repo={this.github} />
-          <SlideShow images={[`${BASE_PATH}/jra/1.png`]} />
-          <TypographyH3 className="my-4 mt-8">
-            Effortless Results Retrieval
-          </TypographyH3>
-          {/* Effortless Results Retrieval: */}
-          <ul className="list-disc ml-6">
-            <li className="font-mono">
-              Search all your results using a single roll number, eliminating
-              the tedious task of sifting through thousands of rows on the
-              official site.
-            </li>
-          </ul>
-          <TypographyH3 className="my-4 mt-8">Class-Wise Results:</TypographyH3>
-          <ul className="list-disc ml-6">
-            <li className="font-mono">
-              class-wise results effortlessly by entering a roll number range.
-              No more manual searches or filtering.
-            </li>
-          </ul>
-          <TypographyH3 className="my-4 mt-8">Faculty Features:</TypographyH3>
-          <ul className="list-disc ml-6">
-            <li className="font-mono">
-              Faculty members could download batch results in Excel format,
-              making administrative tasks a breeze.
-            </li>
-          </ul>
-          <TypographyH3 className="my-4 mt-8">
-            Enhanced Data Insights:
-          </TypographyH3>
-          <ul className="list-disc ml-6">
-            <li className="font-mono">
-              Each result came with additional features including:
-              <ul className="list-disc font-mono ml-6">
-                <li>
-                  <strong>CGPA Calculations: </strong>Easily track your
-                  cumulative grade point average.
-                </li>
-                <li>
-                  <strong>Charts:</strong> Visualize your academic performance
-                  with comprehensive charts.
-                </li>
-                <li>
-                  <strong>Future Projections:</strong> Get insights into
-                  potential future outcomes based on current performance.
-                </li>
-                <li>
-                  <strong> Backlog Counts: </strong>Keep track of your backlog
-                  subjects at a glance.
-                </li>
-              </ul>
-            </li>
-          </ul>
-          <TypographyH3 className="my-4 mt-8">Performance:</TypographyH3>
-          <ul className="list-disc ml-6">
-            <li className="font-mono">
-              The application was significantly faster and more efficient than
-              the official site, providing a smoother user experience.
-            </li>
-          </ul>
-          <TypographyH3 className="my-4 mt-8">Downfall:</TypographyH3>
-          <ul className="list-disc ml-6">
-            <li className="font-mono">
-              Unfortunately, as of May 2022, the tool stopped working due to the
-              introduction of CAPTCHA on the official JNTUA results site, which
-              disrupted the seamless functionality of the app. JNTUA Results
-              Analyzer transformed the way students and faculty interacted with
-              academic results, making it a must-have tool until its unexpected
-              shutdown.
-            </li>
-          </ul>
+          <TypographyP className="font-mono">
+            Led 10-member CX team supporting 5,000+ learners across 25+ batches, 
+            revolutionizing engagement through structured frameworks and data-driven insights.
+          </TypographyP>
+          <ProjectsLinks live={this.live} />
+
+          <TypographyH3 className="my-4 mt-8">3C Engagement Framework</TypographyH3>
+          <p className="font-mono mb-2">
+            Introduced proprietary 3C Engagement Framework boosting CSAT, NPS, and 
+            retention rates while reducing response time to under 1 hour.
+          </p>
+          <SlideShow
+            images={[
+              `${BASE_PATH}/ostad/framework-1.png`,
+              `${BASE_PATH}/ostad/framework-2.png`,
+            ]}
+          />
+
+          <TypographyH3 className="my-4 mt-8">Team Leadership & Coaching</TypographyH3>
+          <p className="font-mono mb-2">
+            Led and coached CX team achieving 85% course completion rate and 
+            significantly improved learner satisfaction metrics.
+          </p>
+          <SlideShow
+            images={[
+              `${BASE_PATH}/ostad/team-1.png`,
+              `${BASE_PATH}/ostad/team-2.png`,
+            ]}
+          />
+
+          <TypographyH3 className="my-4 mt-8">Instructor Coordination</TypographyH3>
+          <p className="font-mono mb-2">
+            Coordinated 30+ instructors and daily operations for seamless live course 
+            delivery handling 50+ daily student inquiries.
+          </p>
+          <SlideShow images={[`${BASE_PATH}/ostad/coordination.png`]} />
+
+          <TypographyH3 className="my-4 mt-8">Multi-channel Support</TypographyH3>
+          <p className="font-mono mb-2">
+            Managed support across web portal and social media channels with 
+            structured feedback loops and continuous improvement processes.
+          </p>
+          <SlideShow images={[`${BASE_PATH}/ostad/support-channels.png`]} />
+        </div>
+      );
+    },
+  },
+  {
+    id: "cm-work-solutions-ecommerce",
+    category: "E-commerce Client Experience",
+    title: "CM Work Solutions - Amazon & Walmart CX",
+    src: "/assets/projects-screenshots/cm-work/landing.png",
+    screenshots: ["accounts.png", "support.png", "performance.png"],
+    skills: {
+      frontend: [
+        PROJECT_SKILLS.canva,
+        PROJECT_SKILLS.googleWorkspace,
+        PROJECT_SKILLS.msOffice,
+      ],
+      backend: [
+        PROJECT_SKILLS.clientOnboarding,
+        PROJECT_SKILLS.issueResolution,
+        PROJECT_SKILLS.customerSatisfaction,
+      ],
+    },
+    live: "https://cmworksolutions.com/",
+    get content() {
+      return (
+        <div>
+          <TypographyP className="font-mono text-2xl text-center">
+            E-commerce Account Management Excellence
+          </TypographyP>
+          <TypographyP className="font-mono">
+            Managed Amazon & Walmart seller accounts delivering exceptional client 
+            experience through strategic sourcing, fulfillment optimization, and 
+            data-backed performance improvements.
+          </TypographyP>
+          <TypographyP className="font-mono">
+            Achieved 95% retention rate, 25% sales uplift, and 20% revenue growth 
+            through systematic CX improvements.
+          </TypographyP>
+          <ProjectsLinks live={this.live} />
+
+          <TypographyH3 className="my-4 mt-8">Account Onboarding Excellence</TypographyH3>
+          <p className="font-mono mb-2">
+            Onboarded 100+ accounts with 100% compliance while reducing errors 
+            by 30% through standardized processes.
+          </p>
+          <SlideShow
+            images={[
+              `${BASE_PATH}/cm-work/onboarding-1.png`,
+              `${BASE_PATH}/cm-work/onboarding-2.png`,
+            ]}
+          />
+
+          <TypographyH3 className="my-4 mt-8">Client Support & Communication</TypographyH3>
+          <p className="font-mono mb-2">
+            Delivered prompt support to buyers and clients achieving 95% retention 
+            rate and 30% increase in repeat engagements.
+          </p>
+          <SlideShow images={[`${BASE_PATH}/cm-work/support-dashboard.png`]} />
+
+          <TypographyH3 className="my-4 mt-8">Performance Analytics</TypographyH3>
+          <p className="font-mono mb-2">
+            Provided data-backed reports and strategies improving KPIs by 18% 
+            through continuous optimization and client feedback integration.
+          </p>
+          <SlideShow
+            images={[
+              `${BASE_PATH}/cm-work/analytics-1.png`,
+              `${BASE_PATH}/cm-work/analytics-2.png`,
+            ]}
+          />
+
+          <TypographyH3 className="my-4 mt-8">Visual Communication</TypographyH3>
+          <p className="font-mono mb-2">
+            Created compelling visual reports and client communication materials 
+            using Canva enhancing clarity and engagement.
+          </p>
+          <SlideShow images={[`${BASE_PATH}/cm-work/visuals.png`]} />
         </div>
       );
     },
   },
 ];
+
 export default projects;
