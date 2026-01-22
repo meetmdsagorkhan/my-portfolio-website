@@ -19,6 +19,18 @@ Welcome to the repository for my personal portfolio website! This Project was cl
 
 ## 🚀 Getting Started
 
+### Installation
+
+```bash
+npm install
+```
+
+### Development
+
+```bash
+npm run dev
+```
+
 ### Prerequisites
 
 - Node.js (v14+)

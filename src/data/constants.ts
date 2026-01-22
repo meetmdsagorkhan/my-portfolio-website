@@ -145,7 +145,7 @@ export const SKILLS: Record<SkillNames, Skill> = {
   [SkillNames.GOOGLE_WORKSPACE]: {
     id: 10,
     name: "google_workspace",
-    label: "Google Workspace",
+    label: "G-Workspace",
     shortDescription: "Advanced Ops management via Sheets, Forms, and Looker Studio.",
     color: "#ea4335",
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg",
