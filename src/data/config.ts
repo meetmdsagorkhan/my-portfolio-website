@@ -1,5 +1,5 @@
 const config = {
-  title: "Customer Experience Leader | Strategy, Operations & Client Success Architect",
+  title: "CX Lead | Md Sagor Khan",
   description: {
     long: "I am a Customer Experience Leader dedicated to architecting and scaling high-velocity CX operations for disruptive digital platforms. In my current role leading Customer Experience at Priyo Pay, I orchestrate end-to-end onboarding, support ecosystems, and intelligent automation for a global network of freelancers and businesses managing international payments. My expertise lies in optimizing CSAT, SLA compliance, and operational throughput by leveraging data-driven frameworks and CX automation tools like n8n and custom AI agents. With a proven track record of coaching elite teams and developing robust SOPs, I bridge the gap between complex technical requirements and human-centered support. Having previously managed expansive ecosystems across EdTech and E-commerce—supporting over 5,000 users and slashing response times to under an hour—I am passionate about transforming customer feedback into scalable, trust-based systems that drive retention and long-term satisfaction.",
     short:
