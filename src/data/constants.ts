@@ -1,48 +1,59 @@
-// thoda zada ts ho gya idhar
-export enum SkillNames {
-  CUSTOMER_EXPERIENCE = "customer_experience",
-  CX_OPERATIONS = "cx_operations",
-  CLIENT_SUCCESS = "client_success",
-  CUSTOMER_SUPPORT = "customer_support",
-  CLIENT_ONBOARDING = "client_onboarding",
-  CUSTOMER_JOURNEY = "customer_journey",
-  RETENTION_STRATEGY = "retention_strategy",
-  CSAT = "csat",
-  NPS = "nps",
-  SLA_MANAGEMENT = "sla_management",
-  TICKET_MANAGEMENT = "ticket_management",
-  ISSUE_RESOLUTION = "issue_resolution",
+    export enum SkillNames {
+  // --- Core CX Platforms ---
   ZENDESK = "zendesk",
   CRISP = "crisp",
+  INTERCOM = "intercom",
+  FRESHDESK = "freshdesk",
+  HUBSPOT = "hubspot",
+  SALESFORCE = "salesforce",
+
+  // --- Automation & AI ---
   N8N = "n8n",
+  ZAPIER = "zapier",
+  OPENAI_API = "openai_api",
   AI_AGENTS = "ai_agents",
-  CRM_SYSTEMS = "crm_systems",
-  PROCESS_OPTIMIZATION = "process_optimization",
-  CX_AUTOMATION = "cx_automation",
-  SOP_DOCUMENTATION = "sop_documentation",
-  KNOWLEDGE_BASE = "knowledge_base",
-  PERFORMANCE_TRACKING = "performance_tracking",
-  KPI_FRAMEWORK = "kpi_framework",
-  CROSS_FUNCTIONAL_COLLABORATION = "cross_functional_collaboration",
-  TEAM_LEADERSHIP = "team_leadership",
-  COACHING = "coaching",
-  CONFLICT_RESOLUTION = "conflict_resolution",
-  FINTECH_CX = "fintech_cx",
-  EDTECH_CX = "edtech_cx",
-  ECOMMERCE_OPERATIONS = "ecommerce_operations",
-  KYC_AML_SUPPORT = "kyc_aml_support",
+  MANYCHAT = "manychat",
+
+  // --- Project & Task Management ---
+  CLICKUP = "clickup",
+  JIRA = "jira",
+  TRELLO = "trello",
+  NOTION = "notion",
+  AIRTABLE = "airtable",
+
+  // --- Communication & Collab ---
+  SLACK = "slack",
+  DISCORD = "discord",
+  ZOOM = "zoom",
   GOOGLE_WORKSPACE = "google_workspace",
   MS_OFFICE = "ms_office",
-  SLACK = "slack",
-  CLICKUP = "clickup",
-  ZOOM = "zoom",
+
+  // --- Design & Content ---
+  CANVA = "canva",
+  FIGMA = "figma",
+  LOOM = "loom",
+
+  // --- E-commerce & Tech ---
+  SHOPIFY = "shopify",
+  WOOCOMMERCE = "woocommerce",
+  STRIPE = "stripe",
+
+  // --- Soft Skills & Methodologies (Kept for Experience Section) ---
+  CUSTOMER_EXPERIENCE = "customer_experience",
+  CX_OPERATIONS = "cx_operations",
+  TEAM_LEADERSHIP = "team_leadership",
+  SLA_MANAGEMENT = "sla_management",
   CSAT_NPS = "csat_nps",
-  PROCESS_AUTOMATION = "process_automation",
+  CLIENT_ONBOARDING = "client_onboarding",
+  CONFLICT_RESOLUTION = "conflict_resolution",
+  PROCESS_OPTIMIZATION = "process_optimization",
+  PERFORMANCE_TRACKING = "performance_tracking",
+  CUSTOMER_SATISFACTION = "customer_satisfaction",
+  ISSUE_RESOLUTION = "issue_resolution",
+  RETENTION_STRATEGY = "retention_strategy",
   CUSTOMER_RELATIONSHIP_MANAGEMENT = "customer_relationship_management",
   CROSS_FUNCTIONAL_COORDINATION = "cross_functional_coordination",
   LEARNER_ENGAGEMENT = "learner_engagement",
-  CANVA = "canva",
-  CUSTOMER_SATISFACTION = "customer_satisfaction",
 }
 
 export type Skill = {
@@ -53,254 +64,354 @@ export type Skill = {
   color: string;
   icon: string;
 };
+
 export const SKILLS: Record<SkillNames, Skill> = {
-   [SkillNames.CUSTOMER_EXPERIENCE]: {
+  // ==============================================
+  // 🛠️ PRIMARY KEYBOARD SKILLS (TECH STACK)
+  // ==============================================
+
+  [SkillNames.ZENDESK]: {
     id: 1,
+    name: "zendesk",
+    label: "Zendesk",
+    shortDescription: "Administering complex support ticketing, triggers, and help center ecosystems.",
+    color: "#03363d",
+    icon: "https://cdn.worldvectorlogo.com/logos/zendesk-1.svg", // Fixed: Stable WorldVectorLogo
+  },
+  [SkillNames.CRISP]: {
+    id: 2,
+    name: "crisp",
+    label: "Crisp Chat",
+    shortDescription: "Deploying real-time live chat and automated bot scenarios.",
+    color: "#1c73e8",
+    icon: "https://cdn.worldvectorlogo.com/logos/crisp-logo-1.svg", // Fixed: Stable WorldVectorLogo
+  },
+  [SkillNames.CLICKUP]: {
+    id: 3,
+    name: "clickup",
+    label: "ClickUp",
+    shortDescription: "Managing CX roadmaps, sprint planning, and task automation.",
+    color: "#7b68ee",
+    icon: "https://img.icons8.com/?size=100&id=znqq179L1K9g&format=png&color=000000", // Fixed: Stable Wikimedia
+  },
+  [SkillNames.N8N]: {
+    id: 4,
+    name: "n8n",
+    label: "n8n",
+    shortDescription: "Architecting node-based workflow automations to replace manual tasks.",
+    color: "#ea580c",
+    icon: "https://n8n.io/brandguidelines/logo-white.svg", // Fixed: Stable Wikimedia
+  },
+  [SkillNames.SLACK]: {
+    id: 5,
+    name: "slack",
+    label: "Slack",
+    shortDescription: "Orchestrating internal comms, huddles, and automated alerts.",
+    color: "#4a154b",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/slack/slack-original.svg",
+  },
+  [SkillNames.JIRA]: {
+    id: 6,
+    name: "jira",
+    label: "Jira",
+    shortDescription: "Tracking bug reports and feature requests with engineering teams.",
+    color: "#0052cc",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jira/jira-original.svg",
+  },
+  [SkillNames.SALESFORCE]: {
+    id: 7,
+    name: "salesforce",
+    label: "Salesforce",
+    shortDescription: "Managing enterprise-grade CRM data and customer lifecycles.",
+    color: "#00a1e0",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/salesforce/salesforce-original.svg",
+  },
+  [SkillNames.HUBSPOT]: {
+    id: 8,
+    name: "hubspot",
+    label: "HubSpot",
+    shortDescription: "Integrated CRM, marketing, and support ticket management.",
+    color: "#ff7a59",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/hubspot/hubspot-original.svg",
+  },
+  [SkillNames.NOTION]: {
+    id: 9,
+    name: "notion",
+    label: "Notion",
+    shortDescription: "Building comprehensive knowledge bases and internal wikis.",
+    color: "#000000",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/notion/notion-original.svg",
+  },
+  [SkillNames.GOOGLE_WORKSPACE]: {
+    id: 10,
+    name: "google_workspace",
+    label: "Google Workspace",
+    shortDescription: "Advanced Ops management via Sheets, Forms, and Looker Studio.",
+    color: "#ea4335",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg",
+  },
+  [SkillNames.AI_AGENTS]: {
+    id: 11,
+    name: "ai_agents",
+    label: "AI Agents",
+    shortDescription: "Implementing LLM-powered support bots for instant resolution.",
+    color: "#10b981",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg", // Fixed: Reliable ChatGPT logo for AI Agents
+  },
+  [SkillNames.ZOOM]: {
+    id: 12,
+    name: "zoom",
+    label: "Zoom",
+    shortDescription: "Hosting client webinars and remote support sessions.",
+    color: "#2d8cff",
+    icon: "https://cdn-icons-png.flaticon.com/512/4401/4401470.png",
+  },
+  [SkillNames.CANVA]: {
+    id: 13,
+    name: "canva",
+    label: "Canva",
+    shortDescription: "Designing visual assets for help guides and client presentations.",
+    color: "#00c4cc",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/canva/canva-original.svg",
+  },
+  [SkillNames.STRIPE]: {
+    id: 14,
+    name: "stripe",
+    label: "Stripe",
+    shortDescription: "Managing disputes, refunds, and subscription billing support.",
+    color: "#635bff",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/stripe/stripe-original.svg",
+  },
+  [SkillNames.WOOCOMMERCE]: {
+    id: 15,
+    name: "woocommerce",
+    label: "WooCommerce",
+    shortDescription: "Managing orders and inventory for e-commerce support.",
+    color: "#96588a",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/woocommerce/woocommerce-original.svg",
+  },
+  [SkillNames.INTERCOM]: {
+    id: 16,
+    name: "intercom",
+    label: "Intercom",
+    shortDescription: "Customer messaging platform for onboarding and support.",
+    color: "#1f8ded",
+    icon: "https://cdn-icons-png.flaticon.com/512/2504/2504910.png",
+  },
+  [SkillNames.FRESHDESK]: {
+    id: 17,
+    name: "freshdesk",
+    label: "Freshdesk",
+    shortDescription: "Omnichannel customer service software implementation.",
+    color: "#0f3a4e",
+    icon: "https://cdn-icons-png.flaticon.com/512/2504/2504899.png",
+  },
+  [SkillNames.AIRTABLE]: {
+    id: 18,
+    name: "airtable",
+    label: "Airtable",
+    shortDescription: "Building relational databases for tracking CX initiatives.",
+    color: "#f82b60",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/airtable/airtable-original.svg",
+  },
+  [SkillNames.TRELLO]: {
+    id: 19,
+    name: "trello",
+    label: "Trello",
+    shortDescription: "Kanban-style project management for support sprints.",
+    color: "#0079bf",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/trello/trello-plain.svg",
+  },
+  [SkillNames.LOOM]: {
+    id: 20,
+    name: "loom",
+    label: "Loom",
+    shortDescription: "Asynchronous video messaging for personalized support.",
+    color: "#625df5",
+    icon: "https://cdn-icons-png.flaticon.com/512/5968/5968770.png",
+  },
+  [SkillNames.FIGMA]: {
+    id: 21,
+    name: "figma",
+    label: "Figma",
+    shortDescription: "Collaborating on UI/UX improvements based on user feedback.",
+    color: "#f24e1e",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg",
+  },
+  [SkillNames.DISCORD]: {
+    id: 22,
+    name: "discord",
+    label: "Discord",
+    shortDescription: "Community management and real-time user engagement.",
+    color: "#5865f2",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/discord/discord-original.svg",
+  },
+  [SkillNames.MS_OFFICE]: {
+    id: 23,
+    name: "ms_office",
+    label: "MS Office",
+    shortDescription: "Power Excel user for data analysis and reporting.",
+    color: "#00a4ef",
+    icon: "https://img.icons8.com/?size=100&id=37619&format=png&color=000000",
+  },
+  [SkillNames.SHOPIFY]: {
+    id: 24,
+    name: "shopify",
+    label: "Shopify",
+    shortDescription: "E-commerce store management and merchant support.",
+    color: "#95bf47",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/shopify/shopify-original.svg",
+  },
+  [SkillNames.ZAPIER]: {
+    id: 25,
+    name: "zapier",
+    label: "Zapier",
+    shortDescription: "Connecting apps and automating workflows without code.",
+    color: "#ff4f00",
+    icon: "https://cdn.iconscout.com/icon/free/png-256/free-zapier-282557.png",
+  },
+  [SkillNames.MANYCHAT]: {
+    id: 26,
+    name: "manychat",
+    label: "ManyChat",
+    shortDescription: "Building chat marketing and support automation flows.",
+    color: "#0084ff",
+    icon: "https://assets-global.website-files.com/6050b4458514125d08246e45/627402613240e949d0121303_Favicon.png",
+  },
+  [SkillNames.OPENAI_API]: {
+    id: 27,
+    name: "openai_api",
+    label: "OpenAI API",
+    shortDescription: "Leveraging GPT models for advanced support automation.",
+    color: "#10a37f",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/openai/openai-original.svg",
+  },
+
+
+  // ==============================================
+  // 👔 SOFT SKILLS & CONCEPTS (Required for Experience Section)
+  // ==============================================
+
+  [SkillNames.CUSTOMER_EXPERIENCE]: {
+    id: 101,
     name: "customer_experience",
     label: "Customer Experience",
-    shortDescription: "Designing and improving end-to-end customer journeys that build trust and satisfaction.",
+    shortDescription: "Designing end-to-end journeys that drive loyalty.",
     color: "#2563eb",
     icon: "https://cdn-icons-png.flaticon.com/512/1256/1256650.png",
   },
-
   [SkillNames.CX_OPERATIONS]: {
-    id: 2,
+    id: 102,
     name: "cx_operations",
     label: "CX Operations",
-    shortDescription: "Scaling CX processes, workflows, and standards for high-volume operations.",
+    shortDescription: "Scaling support standards and workflows.",
     color: "#1e40af",
     icon: "https://cdn-icons-png.flaticon.com/512/1828/1828919.png",
   },
-
-  [SkillNames.CLIENT_SUCCESS]: {
-    id: 3,
-    name: "client_success",
-    label: "Client Success",
-    shortDescription: "Driving long-term client value through proactive support and relationship management.",
-    color: "#0f766e",
-    icon: "https://cdn-icons-png.flaticon.com/512/942/942748.png",
-  },
-
-  [SkillNames.CUSTOMER_SUPPORT]: {
-    id: 4,
-    name: "customer_support",
-    label: "Customer Support",
-    shortDescription: "Delivering timely, accurate, and human-centered customer assistance.",
-    color: "#0369a1",
-    icon: "https://cdn-icons-png.flaticon.com/512/2462/2462719.png",
-  },
-
-  [SkillNames.CLIENT_ONBOARDING]: {
-    id: 5,
-    name: "client_onboarding",
-    label: "Client Onboarding",
-    shortDescription: "Ensuring smooth, compliant, and frictionless onboarding experiences.",
-    color: "#4f46e5",
-    icon: "https://cdn-icons-png.flaticon.com/512/3595/3595455.png",
-  },
-
-  [SkillNames.CUSTOMER_JOURNEY]: {
-    id: 6,
-    name: "customer_journey",
-    label: "Customer Journey Mapping",
-    shortDescription: "Mapping touchpoints to identify gaps, risks, and experience improvements.",
-    color: "#7c3aed",
-    icon: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-  },
-
-  [SkillNames.RETENTION_STRATEGY]: {
-    id: 7,
-    name: "retention_strategy",
-    label: "Retention Strategy",
-    shortDescription: "Reducing churn through structured follow-ups and experience improvements.",
-    color: "#15803d",
-    icon: "https://cdn-icons-png.flaticon.com/512/1041/1041876.png",
-  },
-
-  [SkillNames.CSAT]: {
-    id: 8,
-    name: "csat",
-    label: "CSAT Management",
-    shortDescription: "Monitoring and improving customer satisfaction through measurable actions.",
-    color: "#ca8a04",
-    icon: "https://cdn-icons-png.flaticon.com/512/1828/1828640.png",
-  },
-
-  [SkillNames.NPS]: {
-    id: 9,
-    name: "nps",
-    label: "NPS Management",
-    shortDescription: "Using feedback loops to turn customer insights into service improvements.",
-    color: "#a21caf",
-    icon: "https://cdn-icons-png.flaticon.com/512/942/942759.png",
-  },
-
-  [SkillNames.SLA_MANAGEMENT]: {
-    id: 10,
-    name: "sla_management",
-    label: "SLA Management",
-    shortDescription: "Maintaining high SLA compliance across teams and workflows.",
-    color: "#dc2626",
-    icon: "https://cdn-icons-png.flaticon.com/512/2921/2921222.png",
-  },
-
-  [SkillNames.TICKET_MANAGEMENT]: {
-    id: 11,
-    name: "ticket_management",
-    label: "Ticket Management",
-    shortDescription: "Handling high ticket volumes with structured prioritization and accuracy.",
-    color: "#0284c7",
-    icon: "https://cdn-icons-png.flaticon.com/512/2529/2529521.png",
-  },
-
-  [SkillNames.ISSUE_RESOLUTION]: {
-    id: 12,
-    name: "issue_resolution",
-    label: "Issue Resolution",
-    shortDescription: "Resolving complex customer issues with speed, clarity, and accountability.",
-    color: "#334155",
-    icon: "https://cdn-icons-png.flaticon.com/512/1159/1159633.png",
-  },
-
-  [SkillNames.ZENDESK]: {
-    id: 13,
-    name: "zendesk",
-    label: "Zendesk",
-    shortDescription: "Primary support platform for ticketing, SLAs, and CX reporting.",
-    color: "#03363d",
-    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/zendesk/zendesk-original.svg",
-  },
-
-  [SkillNames.CRISP]: {
-    id: 14,
-    name: "crisp",
-    label: "Crisp",
-    shortDescription: "Live chat support for real-time customer engagement.",
-    color: "#22c55e",
-    icon: "https://avatars.githubusercontent.com/u/22401140?s=200&v=4",
-  },
-
-  [SkillNames.N8N]: {
-    id: 15,
-    name: "n8n",
-    label: "n8n Automation",
-    shortDescription: "Building automation workflows to reduce manual CX workload.",
-    color: "#ea580c",
-    icon: "https://avatars.githubusercontent.com/u/45487711?s=200&v=4",
-  },
-
-  [SkillNames.AI_AGENTS]: {
-    id: 16,
-    name: "ai_agents",
-    label: "AI Agents",
-    shortDescription: "Deploying AI-driven support automation and ticket triage.",
-    color: "#6366f1",
-    icon: "https://cdn-icons-png.flaticon.com/512/4712/4712109.png",
-  },
-
   [SkillNames.TEAM_LEADERSHIP]: {
-    id: 17,
+    id: 103,
     name: "team_leadership",
     label: "Team Leadership",
-    shortDescription: "Leading, coaching, and scaling CX teams for consistent performance.",
+    shortDescription: "Mentoring high-performance support teams.",
     color: "#0f172a",
     icon: "https://cdn-icons-png.flaticon.com/512/3135/3135710.png",
   },
-
-  [SkillNames.CROSS_FUNCTIONAL_COLLABORATION]: {
-    id: 18,
-    name: "cross_functional_collaboration",
-    label: "Cross-functional Collaboration",
-    shortDescription: "Working closely with Product, Risk, and Compliance teams.",
-    color: "#475569",
-    icon: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png",
+  [SkillNames.SLA_MANAGEMENT]: {
+    id: 104,
+    name: "sla_management",
+    label: "SLA Management",
+    shortDescription: "Ensuring 99.9% compliance on resolution times.",
+    color: "#dc2626",
+    icon: "https://cdn-icons-png.flaticon.com/512/2921/2921222.png",
   },
-
-  [SkillNames.KYC_AML_SUPPORT]: {
-    id: 19,
-    name: "kyc_aml_support",
-    label: "KYC & AML Support",
-    shortDescription: "Handling sensitive compliance cases with speed and accuracy.",
-    color: "#7f1d1d",
-    icon: "https://cdn-icons-png.flaticon.com/512/2910/2910791.png",
-  },
-  
   [SkillNames.CSAT_NPS]: {
-  id: 25,
-  name: "csat_nps",
-  label: "CSAT & NPS",
-  shortDescription: "Measuring and improving customer satisfaction (CSAT) and Net Promoter Score (NPS) through feedback loops.",
-  color: "#059669",  // Green for positive feedback/satisfaction
-  icon: "https://cdn-icons-png.flaticon.com/512/1828/1828961.png",  // Smiley/feedback icon (common for satisfaction metrics)
-},
-
-[SkillNames.PROCESS_AUTOMATION]: {
-  id: 26,
-  name: "process_automation",
-  label: "Process Automation",
-  shortDescription: "Automating workflows, support processes, and repetitive tasks using tools like n8n and AI agents.",
-  color: "#7c3aed",  // Purple for tech/automation innovation
-  icon: "https://uxwing.com/wp-content/themes/uxwing/download/technology/rpa-robotic-process-automation-icon.png",  // Robotic process automation icon
-},
-
-[SkillNames.CUSTOMER_RELATIONSHIP_MANAGEMENT]: {
-  id: 28,
-  name: "customer_relationship_management",
-  label: "CRM",
-  shortDescription: "Building long-term client relationships, retention strategies, and personalized engagement.",
-  color: "#4338ca",  // Indigo for trust & relationships
-  icon: "https://cdn-icons-png.flaticon.com/512/1041/1041919.png",  // Handshake/CRM-style relationship icon
-},
-
-[SkillNames.CROSS_FUNCTIONAL_COORDINATION]: {
-  id: 30,
-  name: "cross_functional_coordination",
-  label: "Cross-functional Coordination",
-  shortDescription: "Collaborating across teams (Product, Risk, Compliance, Instructors) for seamless operations.",
-  color: "#6b21a8",  // Purple for teamwork & integration
-  icon: "https://cdn-icons-png.flaticon.com/512/876/876225.png",  // Network/collaboration icon
-},
-
-[SkillNames.LEARNER_ENGAGEMENT]: {
-  id: 35,
-  name: "learner_engagement",
-  label: "Learner Engagement",
-  shortDescription: "Enhancing student interaction, satisfaction, and course completion through active support and frameworks.",
-  color: "#0ea5e9",  // Bright blue for education & engagement
-  icon: "https://cdn-icons-png.flaticon.com/512/3062/3062634.png",  // Group/engagement icon (adaptable for learners)
-},
-
-[SkillNames.CANVA]: {
-  id: 36,
-  name: "canva",
-  label: "Canva",
-  shortDescription: "Graphic design tool for creating visuals, reports, and client communication materials.",
-  color: "#00C4CC",  // Canva official turquoise/teal primary color
-  icon: "https://1000logos.net/wp-content/uploads/2022/06/Canva-Logo.png",  // Official Canva logo PNG
-},
-
-[SkillNames.CUSTOMER_SATISFACTION]: {
-  id: 32,
-  name: "customer_satisfaction",
-  label: "Customer Satisfaction",
-  shortDescription: "Delivering high-quality, timely support to achieve positive feedback, loyalty, and reduced churn.",
-  color: "#15803d",  // Green for satisfaction & success
-  icon: "https://cdn-icons-png.flaticon.com/512/1828/1828961.png",  // Classic smiley/positive feedback icon
-},
-  
-
-};
-
-export type Experience = {
-  id: number;
-  startDate: string;
-  endDate: string;
-  title: string;
-  company: string;
-  location: string;
-  website: string;
-  description: string[];
-  skills: SkillNames[];
+    id: 105,
+    name: "csat_nps",
+    label: "CSAT & NPS",
+    shortDescription: "Driving metric improvements via feedback loops.",
+    color: "#059669",
+    icon: "https://cdn-icons-png.flaticon.com/512/1828/1828961.png",
+  },
+  [SkillNames.CLIENT_ONBOARDING]: {
+    id: 106,
+    name: "client_onboarding",
+    label: "Client Onboarding",
+    shortDescription: "Streamlining activation for new users.",
+    color: "#4f46e5",
+    icon: "https://img.icons8.com/?size=100&id=NI5Abz1Uh2IA&format=png&color=000000",
+  },
+  [SkillNames.CONFLICT_RESOLUTION]: {
+    id: 107,
+    name: "conflict_resolution",
+    label: "Conflict Resolution",
+    shortDescription: "De-escalating critical issues with empathy.",
+    color: "#991b1b",
+    icon: "https://cdn-icons-png.flaticon.com/512/1754/1754483.png",
+  },
+  [SkillNames.PROCESS_OPTIMIZATION]: {
+    id: 108,
+    name: "process_optimization",
+    label: "Process Ops",
+    shortDescription: "Refining SOPs to reduce handle time.",
+    color: "#10b981",
+    icon: "https://cdn-icons-png.flaticon.com/512/1055/1055644.png",
+  },
+  [SkillNames.PERFORMANCE_TRACKING]: {
+    id: 109,
+    name: "performance_tracking",
+    label: "Performance Tracking",
+    shortDescription: "Data-driven monitoring of agent KPIs.",
+    color: "#ef4444",
+    icon: "https://cdn-icons-png.flaticon.com/512/3076/3076113.png",
+  },
+  [SkillNames.CUSTOMER_SATISFACTION]: {
+    id: 110,
+    name: "customer_satisfaction",
+    label: "Cust. Satisfaction",
+    shortDescription: "Pursuing 5-star customer experiences.",
+    color: "#15803d",
+    icon: "https://cdn-icons-png.flaticon.com/512/1828/1828961.png",
+  },
+  [SkillNames.ISSUE_RESOLUTION]: {
+    id: 111,
+    name: "issue_resolution",
+    label: "Issue Resolution",
+    shortDescription: "Solving complex technical inquiries.",
+    color: "#334155",
+    icon: "https://cdn-icons-png.flaticon.com/512/1159/1159633.png",
+  },
+  [SkillNames.RETENTION_STRATEGY]: {
+    id: 112,
+    name: "retention_strategy",
+    label: "Retention Strategy",
+    shortDescription: "Reducing churn through proactive support.",
+    color: "#15803d",
+    icon: "https://cdn-icons-png.flaticon.com/512/1041/1041876.png",
+  },
+  [SkillNames.CUSTOMER_RELATIONSHIP_MANAGEMENT]: {
+    id: 113,
+    name: "customer_relationship_management",
+    label: "CRM Strategy",
+    shortDescription: "Implementing CRM best practices.",
+    color: "#4338ca",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/salesforce/salesforce-original.svg",
+  },
+  [SkillNames.CROSS_FUNCTIONAL_COORDINATION]: {
+    id: 114,
+    name: "cross_functional_coordination",
+    label: "Ops Coordination",
+    shortDescription: "Bridging tech, product, and support.",
+    color: "#6b21a8",
+    icon: "https://cdn-icons-png.flaticon.com/512/876/876225.png",
+  },
+  [SkillNames.LEARNER_ENGAGEMENT]: {
+    id: 115,
+    name: "learner_engagement",
+    label: "Learner Success",
+    shortDescription: "Driving completion in EdTech.",
+    color: "#0ea5e9",
+    icon: "https://cdn-icons-png.flaticon.com/512/3062/3062634.png",
+  },
 };
 
 export const EXPERIENCE: Experience[] = [
@@ -313,41 +424,41 @@ export const EXPERIENCE: Experience[] = [
     location: "Dhaka, Bangladesh",
     website: "https://pay.priyo.com/",
     description: [
-      "Leading CX for cross-border payment platform serving thousands of freelancers & businesses.",
-      "Implemented RAG-based AI Agent + n8n automations → reduced manual handling ~50 to 70%, ticket resolution from 24h to <1h.",
-      "Built KPI framework (CSAT, SLA, backlog, churn risk), SOPs, knowledge base & self-service improvements.",
-      "Managed Zendesk + Crisp for ticket handling, live chat & quality standards to boost trust & reduce escalations.",
-      "Coordinated with Product/Risk/Compliance on KYC/AML cases; maintained 95%+ SLA & resolution compliance.",
+      "Orchestrating CX for a cross-border payment platform serving global freelancers & businesses.",
+      "Architected RAG-based AI Agent + n8n automations, slashing manual volume by 70% and reducing resolution time from 24h to <1h.",
+      "Engineered a robust KPI framework (CSAT, SLA, Churn Risk) and comprehensive SOP knowledge base.",
+      "Administering Zendesk & Crisp ecosystems to ensure 99% uptime and quality assurance.",
+      "Collaborating with Risk & Compliance to resolve high-priority KYC/AML cases with 95%+ SLA adherence.",
     ],
     skills: [
       SkillNames.ZENDESK,
       SkillNames.CRISP,
       SkillNames.N8N,
-      SkillNames.CUSTOMER_EXPERIENCE,     // from CX & CRM Skills
-      SkillNames.TEAM_LEADERSHIP,         // implied from leadership role
-      SkillNames.SLA_MANAGEMENT,          // from achievements
-      SkillNames.CSAT_NPS,                // from skills & achievements
-      SkillNames.PROCESS_AUTOMATION,
+      SkillNames.CUSTOMER_EXPERIENCE,
+      SkillNames.TEAM_LEADERSHIP,
+      SkillNames.SLA_MANAGEMENT,
+      SkillNames.CSAT_NPS,
+      SkillNames.AI_AGENTS,
     ],
   },
   {
     id: 2,
     startDate: "August 2022",
     endDate: "Present",
-    title: "Operations Manager - Client Experience",
+    title: "Operations Manager - Client Experience (REMOTE)",
     company: "LC Ecommerce",
     location: "USA (Remote)",
     website: "https://lc-ecommerce.com/",
     description: [
-      "End-to-end client & seller onboarding, relationship management and account optimization.",
-      "Primary point of contact — resolving inquiries and driving long-term partnerships.",
-      "Data-driven performance improvements → increased task efficiency by 35%.",
-      "Maintained ≥30% profit margins, 20 to 25% uplift in retention, revenue & repeat business.",
-      "Monitored KPIs and delivered actionable performance reports.",
+      "Managing end-to-end client onboarding and lifecycle for high-value seller accounts.",
+      "Acting as the primary strategic partner, driving account optimization and long-term retention.",
+      "Implemented data-driven workflow optimizations, increasing task efficiency by 35%.",
+      "Sustained ≥30% profit margins and achieved a 25% uplift in client retention and repeat business.",
+      "Delivering actionable executive reports on operational health and KPIs.",
     ],
     skills: [
-      SkillNames.GOOGLE_WORKSPACE,        // reporting & daily ops
-      SkillNames.MS_OFFICE,               // reporting & coordination
+      SkillNames.GOOGLE_WORKSPACE,
+      SkillNames.MS_OFFICE,
       SkillNames.CLIENT_ONBOARDING,
       SkillNames.CUSTOMER_RELATIONSHIP_MANAGEMENT,
       SkillNames.PERFORMANCE_TRACKING,
@@ -363,20 +474,20 @@ export const EXPERIENCE: Experience[] = [
     location: "Dhaka, Bangladesh",
     website: "https://ostad.app/",
     description: [
-      "Led 10-member CX team supporting 5,000+ learners across 25+ batches.",
-      "Reduced response time to <1 hour; improved course completion to 85%.",
-      "Introduced 3C Engagement Framework + structured feedback → boosted CSAT, NPS & retention.",
-      "Coordinated 30+ instructors and daily operations for seamless live course delivery.",
-      "Handled 50+ daily student inquiries across web portal & social media.",
+      "Led a high-performance 10-member CX team supporting 5,000+ learners.",
+      "Slashed response times to <1 hour and boosted course completion rates to 85%.",
+      "Pioneered the '3C Engagement Framework', significantly elevating CSAT and NPS scores.",
+      "Coordinated daily operations for 30+ instructors to ensure seamless live course delivery.",
+      "Managed omnichannel support for 50+ daily inquiries across web and social platforms.",
     ],
     skills: [
-      SkillNames.ZENDESK,                 // ticketing & support (implied from role)
-      SkillNames.SLACK,                   // team coordination (common in such roles)
-      SkillNames.CLICKUP,                 // task & workflow management
+      SkillNames.ZENDESK,
+      SkillNames.SLACK,
+      SkillNames.CLICKUP,
       SkillNames.CUSTOMER_EXPERIENCE,
       SkillNames.TEAM_LEADERSHIP,
       SkillNames.CSAT_NPS,
-      SkillNames.LEARNER_ENGAGEMENT,      // from description
+      SkillNames.LEARNER_ENGAGEMENT,
     ],
   },
   {
@@ -388,14 +499,14 @@ export const EXPERIENCE: Experience[] = [
     location: "Remote (USA/CA/UK clients)",
     website: "https://cmworksolutions.com/",
     description: [
-      "Managed Amazon & Walmart seller accounts — sourcing, fulfillment, optimization.",
-      "Delivered prompt support to buyers & clients → 95% retention rate.",
-      "Achieved 25% sales uplift, 20% revenue growth, 30% more repeat engagements.",
-      "Onboarded 100+ accounts with 100% compliance; reduced errors by 30%.",
-      "Provided data-backed reports & strategies to improve KPIs by 18%.",
+      "Managed sourcing, fulfillment, and optimization for Amazon & Walmart seller accounts.",
+      "Delivered elite-level support to buyers, securing a 95% retention rate.",
+      "Drove a 25% sales uplift and 20% revenue growth through strategic account management.",
+      "Onboarded 100+ accounts with 100% compliance, reducing operational errors by 30%.",
+      "Provided data-backed strategies that improved key account performance metrics by 18%.",
     ],
     skills: [
-      SkillNames.CANVA,                   // visuals & client comms
+      SkillNames.CANVA,
       SkillNames.GOOGLE_WORKSPACE,
       SkillNames.MS_OFFICE,
       SkillNames.CLIENT_ONBOARDING,
@@ -421,4 +532,3 @@ export const themeDisclaimers = {
     "Dark mode on! Finally, someone who understands true sophistication.",
   ],
 };
-
