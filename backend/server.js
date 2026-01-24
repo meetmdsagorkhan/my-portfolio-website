@@ -12,23 +12,43 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*", // Allow all origins for now (restrict in production)
+    origin: "*", // Allow all origins for now
     methods: ["GET", "POST"],
   },
 });
 
-// --- In-Memory Store (replace with Redis/DB for production) ---
-let users = []; // User[]
-let messages = []; // Message[]
+// --- In-Memory Store ---
+let users = [];
+let messages = [];
 
 // Helper: Get random color
 const getRandomColor = () => {
-  const colors = ["#60a5fa", "#f87171", "#4ade80", "#facc15", "#c084fc"];
+  const colors = ["#60a5fa", "#f87171", "#4ade80", "#facc15", "#c084fc", "#22d3ee", "#fb923c"];
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
 // Helper: Get random avatar seed
 const getRandomAvatar = () => Math.floor(Math.random() * 20) + 1;
+
+// Helper: Generate Fascinating Names
+const getFascinatingName = () => {
+  const adjectives = [
+    "Cosmic", "Neon", "Cyber", "Lunar", "Solar", "Quantum", "Digital", 
+    "Retro", "Astro", "Glitch", "Hyper", "Sonic", "Pixel", "Orbit", "Void",
+    "Stellar", "Holographic", "Electric", "Techno", "Galactic"
+  ];
+  const nouns = [
+    "Voyager", "Nomad", "Surfer", "Pilot", "Drifter", "Spark", "Runner", 
+    "Ninja", "Wizard", "Sentinel", "Ghost", "Raider", "Walker", "Phoenix", 
+    "Pioneer", "Architect", "Operator", "Scout", "Guardian", "Wanderer"
+  ];
+  
+  const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const noun = nouns[Math.floor(Math.random() * nouns.length)];
+  const num = Math.floor(Math.random() * 99) + 1; // Small number to prevent exact duplicates
+  
+  return `${adj} ${noun} ${num}`;
+};
 
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
@@ -42,17 +62,17 @@ io.on("connection", (socket) => {
     user.socketId = socket.id;
     user.isOnline = true;
   } else {
-    // Create new user
+    // Create new user with a COOL Name
     user = {
       id: sessionId,
       socketId: socket.id,
-      name: `User ${Math.floor(Math.random() * 1000)}`,
+      name: getFascinatingName(), // <--- NEW: Uses the name generator
       avatar: getRandomAvatar().toString(),
       color: getRandomColor(),
       isOnline: true,
       posX: 0,
       posY: 0,
-      location: "Earth", // Geo-IP logic would go here
+      location: "Earth", 
       flag: "🌍",
       createdAt: new Date().toISOString(),
     };
@@ -127,14 +147,17 @@ io.on("connection", (socket) => {
     }
   });
 
-  // 6. Disconnect
+  // 6. Disconnect - Robust Cleanup (Fixes Ghost Users)
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
-    const u = users.find((x) => x.socketId === socket.id);
-    if (u) {
-      u.isOnline = false;
-      // Optional: Remove user after timeout or immediately
-      users = users.filter((x) => x.socketId !== socket.id); 
+    
+    // Find the user who OWNS this specific socket
+    const userIndex = users.findIndex((u) => u.socketId === socket.id);
+    
+    if (userIndex !== -1) {
+      // Remove them from the array immediately
+      users.splice(userIndex, 1);
+      // Notify everyone else
       io.emit("users-updated", users);
     }
   });
@@ -144,4 +167,3 @@ const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`Socket server running on port ${PORT}`);
 });
-
