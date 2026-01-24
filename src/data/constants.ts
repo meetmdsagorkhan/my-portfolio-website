@@ -414,6 +414,19 @@ export const SKILLS: Record<SkillNames, Skill> = {
   },
 };
 
+export type Experience = {
+  id: number;
+  startDate: string;
+  endDate: string;
+  title: string;
+  company: string;
+  location: string;
+  website: string;
+  description: string[];
+  skills: SkillNames[];
+};
+
+
 export const EXPERIENCE: Experience[] = [
   {
     id: 1,

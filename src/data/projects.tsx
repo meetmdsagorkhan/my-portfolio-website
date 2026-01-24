@@ -1,4 +1,4 @@
-import AceTernityLogo from "@/components/logos/aceternity";
+
 import SlideShow from "@/components/slide-show";
 import { Button } from "@/components/ui/button";
 import { TypographyH3, TypographyP } from "@/components/ui/typography";
@@ -244,6 +244,12 @@ const PROJECT_SKILLS = {
     fg: "white",
     icon: <span className="text-white font-bold">CS</span>,
   },
+  issueResolution: {
+  title: "Issue Resolution",
+  bg: "#334155",
+  fg: "white",
+  icon: <span className="text-white font-bold">IR</span>,
+},
 };
 
 export type Project = {
