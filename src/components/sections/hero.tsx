@@ -49,16 +49,15 @@ const HeroSection = () => {
                   <Tooltip delayDuration={300}>
                     <TooltipTrigger asChild>
                       <h1
-                        className={cn(
-                          "-ml-[6px] leading-none font-thin text-transparent text-slate-800 text-left",
-                          "font-thin text-7xl md:text-7xl lg:text-8xl xl:text-9xl",
-                          "cursor-default text-edge-outline font-display "
-                        )}
-                      >
-                        {config.author.split(" ")[0]}
-                        <br className="md:block hiidden" />
-                        {config.author.split(" ")[1]}
-                      </h1>
+  className={cn(
+    "-ml-[6px] leading-none font-thin text-transparent text-slate-800 text-left",
+    "font-thin text-7xl md:text-7xl lg:text-8xl xl:text-9xl",
+    "cursor-default text-edge-outline font-display"
+  )}
+>
+  {config.author.replace(/^Md\s+/i, "").split(" ")[0]}
+</h1>
+
                     </TooltipTrigger>
                     <TooltipContent
                       side="top"
@@ -76,7 +75,7 @@ const HeroSection = () => {
                       "cursor-default font-display sm:text-xl md:text-xl whitespace-nowrap bg-clip-text "
                     )}
                   >
-                    A Customer Experience & Automation Architect
+                    Clear Communication. Real Care. Concise Experiences.
                   </p>
                 </BlurIn>
               </div>
@@ -108,7 +107,7 @@ const HeroSection = () => {
                       </Link>
                     </TooltipTrigger>
                     <TooltipContent side="bottom">
-                      <p>pls 🥹 🙏</p>
+                      <p>Cause I'm worth it! 🥹</p>
                     </TooltipContent>
                   </Tooltip>
                   <div className="flex items-center h-full gap-2">

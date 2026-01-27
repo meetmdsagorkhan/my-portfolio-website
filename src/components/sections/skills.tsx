@@ -4,7 +4,7 @@ import { SectionHeader } from "./section-header";
 const SkillsSection = () => {
   return (
     <SectionWrapper id="skills" className="w-full h-screen md:h-[150dvh] pointer-events-none">
-    <SectionHeader id='skills' title="Tools I Work With" desc="(hint: press a key)" />
+    <SectionHeader id='skills' title="My Toolkit" desc="(hint: press a key)" />
     </SectionWrapper> 
   );
 };
