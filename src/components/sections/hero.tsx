@@ -75,7 +75,7 @@ const HeroSection = () => {
                       "cursor-default font-display sm:text-xl md:text-xl whitespace-nowrap bg-clip-text "
                     )}
                   >
-                    Clear Communication. Real Care. Concise Experiences.
+                    CX Operations Lead.
                   </p>
                 </BlurIn>
               </div>

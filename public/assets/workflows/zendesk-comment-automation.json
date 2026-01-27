@@ -1,0 +1,896 @@
+{
+  "name": "Zendesk Automation (New Comments)",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {
+          "dimensions": 1536
+        }
+      },
+      "id": "88086d4b-1aba-46fe-ac14-e15288ae3e77",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        288
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "REMOVED",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.latest_comment }}",
+        "options": {
+          "systemMessage": "=Act as a world-class customer support copywriter specializing in fintech customer service. Given the following context, criteria, and instructions, generate the exact reply to a customer ticket using only the retrieved knowledge base documents and the ticket histories.\n\n## Context\nCustomer Details available as variables: Name: {{ $json.requester_name }}, Subject: {{ $json.subject }}, Latest Comment: \"{{ $json.latest_comment }}\", Closing line variable: {{ $json.closing }}. Use only the retrieved knowledge base documents and ticket histories to craft the reply. Ignore any Google Groups \"Support\" subscription/unsubscribe text that appears in the ticket content. The reply must be clear, formal, and concise.\n\n## Approach\n1. Determine whether the latest comment is about KYC, pending/approval, refunds, OTP issues, email change request, or account/card deletion by matching ticket content against the retrieved KB and ticket histories.\n2. If the query relates to KYC, pending/approval, or refunds, or if no relevant information exists in the retrieved documents, produce exactly the specified fallback message (see Instructions) and nothing else.\n3. If the ticket is about OTP issues, do not generate any reply (produce no output).\n4. If the ticket requests an email address change, reply exactly with the exact prescribed sentence (see Instructions) and nothing else.\n5. If the ticket requests account/USD account/Card deletion:\n   - If the customer did not state a reason in their latest comment, ask exactly: \"Could you please provide the reason for your deletion request?\"\n   - In every deletion case, include the sentence: \"Please note that this process is irreversible.\"\n   - Conclude the reply by stating that a human agent will get back to the customer shortly.\n   - Use the normal salutation and closing format described below.\n6. For all other supported queries where relevant information exists in the retrieved documents, craft a single formal and concise paragraph reply using only facts from those documents and the ticket histories. Use bold text only for emphasis when needed. Use numbered lists (1, 2, 3...) only when explaining steps or procedures. Use bullet points (•) only if the source KB content itself is a list. Do not invent procedures, policies, or timelines beyond what the retrieved documents state.\n7. If attachments are mentioned in the message, note in the reply that a human agent will review them if necessary, but only if relevant to the category.\n\n## Response Format\n- Start exactly with: Dear {{ $json.requester_name }},\n- Body must be a single paragraph (no separate paragraphs), unless numbered procedural steps are required—then include numbered steps only for that procedure.\n- Use bold text sparingly and only where emphasis is justified by the content from the retrieved documents.\n- Do not use bullets except when the KB content used is itself structured as a list—then include bullets exactly as in the KB.\n- End the reply with the exact closing line: {{ $json.closing }}\n- Do not include any additional text, meta commentary, links, or prompts beyond the required reply content.\n\n## Instructions\n- If no relevant information is found in the retrieved KB or ticket histories OR if the ticket content is related to KYC, pending/approval, or refunds, reply exactly and only with:\n  Dear {{ $json.requester_name }},\n  \n  Thank you for reaching out. I don't have all the details to resolve your query right now, but our support team will get back to you shortly.\n  \n  Warm regards, \n  Support AI\n- If the customer requests an email change, reply exactly and only with:\n  For security reasons, it is not possible to change the registered email address after approval.\n- If the customer requests deletion of account, USD account, or Card:\n  - If no reason is provided in the latest comment, include the sentence: \"Could you please provide the reason for your deletion request?\"\n  - Always include the sentence: \"Please note that this process is irreversible.\"\n  - Conclude by stating that a human agent will get back shortly (word this as: \"A human agent will get back to you shortly.\")\n  - Ensure reply still uses the standard salutation and ends with {{ $json.closing }}.\n- If the ticket is an OTP issue, do not generate a reply at all (produce no output).\n- Never fabricate information, invent procedures, or supply details not present in the retrieved knowledge base documents or ticket histories.\n- Never redirect to the website or helpdesk, never suggest alternative support channels, and never include extra suggestions or prompts.\n- Maintain a formal, concise tone and ensure the final output is only the customer-facing reply following the Response Format and these Instructions.",
+          "maxIterations": 2
+        }
+      },
+      "id": "20baeb7b-17a9-4148-8aeb-ae94459c5b81",
+      "name": "RAG AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -1536,
+        -352
+      ]
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "0166c91d-09c7-4c75-a8e1-e16d5ffeb772",
+      "name": "Supabase Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        -1440,
+        80
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "REMOVED",
+          "name": "Supabase"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "=content_en",
+        "description": "Contains all knowledge base articles you can refer to when answering user questions. Always use this content to provide accurate and helpful responses.",
+        "topK": 8
+      },
+      "id": "cd4f8356-193d-4db7-abcf-593812eacb8a",
+      "name": "Retrieve Knowledge Base",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        -1328,
+        -128
+      ],
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "zendesk_new_comment",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -2480,
+        -384
+      ],
+      "id": "0631e2ef-406b-4f7c-9471-145fc8568725",
+      "name": "Get New Comments",
+      "webhookId": "40a2ba00-d00a-4bad-bb41-e16720d365ee"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d6e2c443-75f2-40ed-a8b3-5fdb1bfd8dab",
+              "name": "timestamp",
+              "value": "={{new Date().toLocaleString(\"en-BD\", { timeZone: \"Asia/Dhaka\", dateStyle: \"medium\", timeStyle: \"short\" })}}",
+              "type": "string"
+            },
+            {
+              "id": "b4b50999-2418-4d87-b249-5a06ca1ed177",
+              "name": "ticket_id",
+              "value": "={{ $json.body.ticket_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ef963dce-fbda-4ed6-88bc-04690ccfd944",
+              "name": "ticket_status",
+              "value": "={{ $json.body.ticket_status }}",
+              "type": "string"
+            },
+            {
+              "id": "e6e9d0dc-0911-4122-b9c2-c6a2d569285a",
+              "name": "requester_id",
+              "value": "={{ $json.body.requester_id }}",
+              "type": "string"
+            },
+            {
+              "id": "9049bbc0-1887-426a-b382-1daf13d29fa2",
+              "name": "requester_name",
+              "value": "={{ $json.body.requester_name }}",
+              "type": "string"
+            },
+            {
+              "id": "f7ab9fc4-c991-4b88-8669-b59452cfd82e",
+              "name": "requester_email ",
+              "value": "={{ $json.body.requester_email }}",
+              "type": "string"
+            },
+            {
+              "id": "d95b7b6e-6d13-4d2a-8485-2490f586e521",
+              "name": "subject",
+              "value": "={{ $json.body.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "3b599ded-c5e0-42a6-811b-8ebb36729e99",
+              "name": "latest_comment",
+              "value": "={{ $json.body.latest_comment }}",
+              "type": "string"
+            },
+            {
+              "id": "9a487141-3eab-4d94-880a-89ce9c9e997e",
+              "name": "tags",
+              "value": "={{ $json.body.tags }}",
+              "type": "string"
+            },
+            {
+              "id": "1fe1cab2-2f84-49c1-aef8-8b3d452af800",
+              "name": "closing",
+              "value": "=Warm regards, \nSupport AI\n\nReply \"Talk with a human\" to chat with an agent, or call us at [SUPPORT_PHONE].",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2256,
+        -384
+      ],
+      "id": "a80dabee-e771-4d4d-98d1-b69e692dcb2b",
+      "name": "Extract New Comment"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "47b1045e-e5b9-48d6-b6f1-d4b00123b2ad",
+      "name": "Send Reply From Memory",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -1584,
+        -128
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "REMOVED",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "4c051add-f617-4211-9815-786ea248c8ae",
+      "name": "Send Reply From KB",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -1152,
+        80
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "REMOVED",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e7ea5fa7-74a1-4359-a0c9-06534bc7d9df",
+              "leftValue": "={{ $('RAG AI Agent').item.json.output }}",
+              "rightValue": "will get back to you shortly",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -944,
+        -352
+      ],
+      "id": "37876d15-570c-4022-8a42-d1e97055dddf",
+      "name": "If No Relevant KB Found"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://example.zendesk.com/api/v2/tickets/{{ $('Extract New Comment').item.json.ticket_id }}/tags.json",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"tags\": [\"human_requested\"]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -496,
+        -352
+      ],
+      "id": "2358e6cd-eaab-4620-ad59-4e78118bd76f",
+      "name": "Add Tags (human_requested)",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -720,
+        -96
+      ],
+      "id": "abba574a-f9a3-4214-8262-3608f1b88b83",
+      "name": "Wait 10 Sec",
+      "webhookId": "9e1d960d-a0b5-46f4-9ffa-25c5e53331b1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Extract New Comment').item.json.ticket_id }}",
+        "updateFields": {
+          "publicReply": "={{ $json.output }}",
+          "status": "open"
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        -160
+      ],
+      "id": "79808b3c-df42-4beb-b685-55ca1208dcbe",
+      "name": "Send AI Reply",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://example.zendesk.com/api/v2/tickets/{{ $('Extract New Comment').item.json.ticket_id }}/tags.json",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"tags\": [\"ai_reply\"]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -496,
+        32
+      ],
+      "id": "3e41b46e-d460-49db-a04d-738e9fee7e35",
+      "name": "Add Tags (ai_reply)",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Extract New Comment').item.json.ticket_id }}",
+        "updateFields": {
+          "publicReply": "={{ $json.output }}",
+          "status": "open"
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        -592
+      ],
+      "id": "1d8df817-3acd-4db7-a160-67671024dd0a",
+      "name": "AI Reply (Not Confident)",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Extract New Comment').item.json.ticket_id }}",
+        "updateFields": {
+          "publicReply": "Sure! Please hang on — human help is on the way.",
+          "status": "open"
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        -976
+      ],
+      "id": "5e46709b-a83f-493a-a6bb-763fb364245a",
+      "name": "AI Reply (human_requested)",
+      "executeOnce": false,
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -480
+      ],
+      "id": "601aaf81-dcc4-4bae-82d1-ddc00d787b7f",
+      "name": "No Operation, do nothing",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2f28eaa3-aa69-40b3-8b32-01b2514e83b1",
+              "leftValue": "={{ $json.tags }}",
+              "rightValue": "human_requested",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2032,
+        -384
+      ],
+      "id": "a2fb2b28-347e-4321-997d-e31690ca07cc",
+      "name": "If (tags==human_requested)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "90e9f071-cdd9-474d-b526-0b3860d8044b",
+              "leftValue": "={{ $json.latest_comment.toLowerCase()}}",
+              "rightValue": "human",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1808,
+        -880
+      ],
+      "id": "7610bee3-e0aa-404e-9184-edf38eca16da",
+      "name": "If (comment==human)"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://example.zendesk.com/api/v2/tickets/{{ $('Extract New Comment').item.json.ticket_id }}/tags.json",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"tags\": [\"human_requested\"]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1376,
+        -1040
+      ],
+      "id": "93428b7d-ce9c-4a88-a181-b1d7517ca1ff",
+      "name": "Add Tags (human_requested).",
+      "executeOnce": false,
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get current time in Dhaka\nconst dhakaTime = new Date().toLocaleString(\"en-US\", { timeZone: \"Asia/Dhaka\" });\nconst ticketTime = new Date(dhakaTime);\nconst hours = ticketTime.getHours();\n\n// 3️⃣ Check agent availability\n if (hours >= 10 || hours < 3) {\n    action = \"agent_available\"; // AI/human can respond normally\n} \nelse {\n    action = \"after_hours\"; // send polite offline reply\n}\n\n// Output for Switch/IF node downstream\nreturn [{ json: { action } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -944,
+        -896
+      ],
+      "id": "fb1a87b7-5b92-41fc-a4a8-d80b9ada0175",
+      "name": "Check Agent Availability"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "90f46564-8a02-43f9-b219-ceccd64312e9",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "agent_available",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -720,
+        -896
+      ],
+      "id": "215d4011-7229-461f-bca5-163d095d0504",
+      "name": "If (Available)"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Extract New Comment').item.json.ticket_id }}",
+        "updateFields": {
+          "publicReply": "=Oops! 🛌 Our support team is catching some Zzzs 😴. We'll be awake and back online 10:00 AM – 3:00 AM Dhaka time. Don't worry — you're at the top of our priority list!\n",
+          "status": "open"
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        -784
+      ],
+      "id": "7cc67e84-6f9b-4e19-8add-6713466447e6",
+      "name": "Away Message",
+      "executeOnce": false,
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.ticket_id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -1456,
+        -128
+      ],
+      "id": "da8e4214-3cf8-475f-8b0d-9a61c70a44b0",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.ticket_id }}",
+        "tableName": "zendesk_ticket_histories"
+      },
+      "id": "f44e4f0f-3d5c-47c3-aba4-654e196a5fd4",
+      "name": "Postgres Ticket Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1,
+      "position": [
+        -2480,
+        256
+      ],
+      "notesInFlow": false,
+      "credentials": {
+        "postgres": {
+          "id": "REMOVED",
+          "name": "Postgres (Supabase)"
+        }
+      },
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RAG AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If No Relevant KB Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Retrieve Knowledge Base",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get New Comments": {
+      "main": [
+        [
+          {
+            "node": "Extract New Comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract New Comment": {
+      "main": [
+        [
+          {
+            "node": "If (tags==human_requested)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reply From Memory": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reply From KB": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Retrieve Knowledge Base",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If No Relevant KB Found": {
+      "main": [
+        [
+          {
+            "node": "AI Reply (Not Confident)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Add Tags (human_requested)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 10 Sec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 10 Sec": {
+      "main": [
+        [
+          {
+            "node": "Send AI Reply",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Add Tags (ai_reply)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If (tags==human_requested)": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If (comment==human)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If (comment==human)": {
+      "main": [
+        [
+          {
+            "node": "Add Tags (human_requested).",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check Agent Availability",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Agent Availability": {
+      "main": [
+        [
+          {
+            "node": "If (Available)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If (Available)": {
+      "main": [
+        [
+          {
+            "node": "AI Reply (human_requested)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Away Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Reply (human_requested)": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Away Message": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Reply (Not Confident)": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Tags (human_requested)": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send AI Reply": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Tags (ai_reply)": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "versionId": "9cfbff0e-4519-4370-b812-cdc34f55adcb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "513dd4a16179a0f69370a160bc098697921c3c85d88ed306fa8ad565e8b80322"
+  },
+  "id": "t970IkBwadGPY8MQ"
+}

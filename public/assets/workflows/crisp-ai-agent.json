@@ -1,0 +1,1092 @@
+{
+  "name": "Intelligent AI Support Bot with Human Handover System",
+  "description": "Complete AI chatbot system with knowledge base integration and intelligent human agent handover",
+  "workflows": {
+    "mainAiBot": {
+      "name": "AI Support Bot",
+      "enabled": false,
+      "description": "A bot using AI to automatically converse with your users, using all your imported data sources.",
+      "updated_at": 1767514925961,
+      "author": "REMOVED",
+      "priority": 1,
+      "updated_author": "REMOVED",
+      "flow": {
+        "draft": {
+          "blocks": [
+            {
+              "id": "0_id",
+              "position": {
+                "x": 1400,
+                "y": 0
+              },
+              "type": "entry"
+            },
+            {
+              "id": "1_id",
+              "position": {
+                "x": 1400,
+                "y": 214
+              },
+              "type": "action",
+              "data": {
+                "type": "infer-answer",
+                "settings": {
+                  "quality": 75,
+                  "sources": [
+                    "helpdesk",
+                    "webpage"
+                  ],
+                  "greetings": true,
+                  "unclosed": true,
+                  "system_prompt": "You are an AI Support Agent.\nYou are a trusted member of the Customer Experience Team, dedicated to delivering accurate, helpful, and friendly support.\n\nYour top priority is customer satisfaction.\nAlways provide clear, correct, and verified information to customers, ensuring every interaction reflects our commitment to transparency, trust, and excellence.\nNEVER reply outside of your knowledge base, DO NOT include any extra information."
+                }
+              }
+            },
+            {
+              "id": "2_id",
+              "position": {
+                "x": 1400,
+                "y": 96
+              },
+              "type": "event",
+              "data": {
+                "type": "message-new",
+                "settings": {
+                  "negate": false
+                }
+              }
+            },
+            {
+              "id": "3_id",
+              "position": {
+                "x": 1120,
+                "y": 487
+              },
+              "type": "action",
+              "data": {
+                "type": "wait",
+                "settings": {
+                  "seconds": 5
+                }
+              }
+            },
+            {
+              "id": "4_id",
+              "position": {
+                "x": 1120,
+                "y": 610
+              },
+              "type": "action",
+              "data": {
+                "type": "message-send",
+                "subtype": "picker",
+                "settings": {
+                  "default": {
+                    "type": "picker",
+                    "content": {
+                      "id": "picker_747cab92-afd1-4ac1-9a32-b8b00c2fdf0b",
+                      "text": "Was this answer helpful?",
+                      "choices": [
+                        {
+                          "value": "choice_dafd17a6-745c-44dc-8f41-5b64782af26b",
+                          "label": "My issue is resolved",
+                          "selected": false,
+                          "icon": "✌️"
+                        },
+                        {
+                          "value": "choice_08de851f-7fb8-4e69-aa14-e1f7efc084e8",
+                          "label": "Chat with a human",
+                          "selected": false,
+                          "icon": "💬"
+                        },
+                        {
+                          "value": "choice_e57ef73d-4e51-4e0e-8a74-11de00f86fe3",
+                          "label": "Call us",
+                          "selected": false,
+                          "icon": "📞",
+                          "action": {
+                            "type": "link",
+                            "target": "https://example.com/"
+                          }
+                        },
+                        {
+                          "value": "choice_bf591ff6-5e2c-452c-a285-7d0c0b49df27",
+                          "label": "I have another question",
+                          "selected": false,
+                          "icon": "❓"
+                        }
+                      ],
+                      "required": false
+                    },
+                    "memorize": {
+                      "enabled": false
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "5_id",
+              "position": {
+                "x": 840,
+                "y": 853
+              },
+              "type": "event",
+              "data": {
+                "type": "message-action",
+                "settings": {
+                  "type": "button-click",
+                  "match": "choice_dafd17a6-745c-44dc-8f41-5b64782af26b"
+                }
+              }
+            },
+            {
+              "id": "6_id",
+              "position": {
+                "x": 1120,
+                "y": 853
+              },
+              "type": "event",
+              "data": {
+                "type": "message-action",
+                "settings": {
+                  "type": "button-click",
+                  "match": "choice_08de851f-7fb8-4e69-aa14-e1f7efc084e8"
+                }
+              }
+            },
+            {
+              "id": "7_id",
+              "position": {
+                "x": 1400,
+                "y": 853
+              },
+              "type": "event",
+              "data": {
+                "type": "message-action",
+                "settings": {
+                  "type": "button-click",
+                  "match": "choice_bf591ff6-5e2c-452c-a285-7d0c0b49df27"
+                }
+              }
+            },
+            {
+              "id": "8_id",
+              "position": {
+                "x": 840,
+                "y": 971
+              },
+              "type": "action",
+              "data": {
+                "type": "message-send",
+                "subtype": "text",
+                "settings": {
+                  "default": {
+                    "type": "text",
+                    "content": "My pleasure, wishing you a nice day ahead! \nIf you have a moment, please leave a quick rating — it really helps us improve! :)"
+                  }
+                }
+              }
+            },
+            {
+              "id": "9_id",
+              "position": {
+                "x": 1400,
+                "y": 971
+              },
+              "type": "action",
+              "data": {
+                "type": "message-send",
+                "subtype": "text",
+                "settings": {
+                  "default": {
+                    "type": "text",
+                    "content": "Sure thing, how can I help?"
+                  }
+                }
+              }
+            },
+            {
+              "id": "11_id",
+              "position": {
+                "x": 1400,
+                "y": 1389
+              },
+              "type": "exit",
+              "data": {
+                "type": "stop"
+              }
+            },
+            {
+              "id": "12_id",
+              "position": {
+                "x": 1400,
+                "y": 1133
+              },
+              "type": "proxy",
+              "data": {
+                "type": "loop",
+                "settings": {
+                  "id": "2_id"
+                }
+              }
+            },
+            {
+              "id": "14_id",
+              "position": {
+                "x": 1680,
+                "y": 487
+              },
+              "type": "proxy",
+              "data": {
+                "type": "loop",
+                "settings": {
+                  "id": "2_id"
+                }
+              }
+            },
+            {
+              "id": "block_c9253100-4d67-40ee-bc59-2bd52ba4e0e6",
+              "position": {
+                "x": 1680,
+                "y": 214
+              },
+              "type": "action",
+              "data": {
+                "type": "message-send",
+                "subtype": "picker",
+                "settings": {
+                  "default": {
+                    "type": "picker",
+                    "content": {
+                      "id": "picker_788ef319-91cf-4a37-8c8d-66122502a8aa",
+                      "text": "Apologies, I didn't quite understand your question.\n\nCould you please rephrase or provide a bit more detail? I'll do my best to assist you once I have a clearer understanding.",
+                      "choices": [
+                        {
+                          "value": "choice_8329853b-4adc-419c-aaa1-7ff4bc807fb9",
+                          "label": "Chat with a human",
+                          "selected": false,
+                          "icon": "💬"
+                        },
+                        {
+                          "value": "choice_77a08d80-34e1-4b2d-9e7a-db8d342c8013",
+                          "label": "Call us",
+                          "selected": false,
+                          "action": {
+                            "type": "link",
+                            "target": "https://example.com/"
+                          },
+                          "icon": "📞"
+                        }
+                      ]
+                    },
+                    "memorize": {
+                      "enabled": false
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "block_cc8b8627-6faa-4eba-a8a1-52ba428f2c1c",
+              "position": {
+                "x": 1400,
+                "y": 487
+              },
+              "type": "event",
+              "data": {
+                "type": "message-action",
+                "settings": {
+                  "type": "button-click",
+                  "match": "choice_8329853b-4adc-419c-aaa1-7ff4bc807fb9"
+                }
+              }
+            },
+            {
+              "id": "block_702218a1-c634-474f-9e66-5956ff5ed402",
+              "position": {
+                "x": 840,
+                "y": 1133
+              },
+              "type": "action",
+              "data": {
+                "type": "request-feedback"
+              }
+            },
+            {
+              "id": "block_4c0ff059-85b8-440c-87e6-a59b41becd4f",
+              "position": {
+                "x": 840,
+                "y": 1256
+              },
+              "type": "action",
+              "data": {
+                "type": "state-change",
+                "settings": {
+                  "state": "resolved"
+                }
+              }
+            },
+            {
+              "id": "block_bed01a7a-4362-47d8-b634-af0f51e1ec1c",
+              "position": {
+                "x": 1960,
+                "y": 487
+              },
+              "type": "event",
+              "data": {
+                "type": "message-action",
+                "settings": {
+                  "type": "button-click",
+                  "match": "choice_77a08d80-34e1-4b2d-9e7a-db8d342c8013"
+                }
+              }
+            },
+            {
+              "id": "block_8012646c-4115-4afb-a25d-884b34650031",
+              "position": {
+                "x": 1960,
+                "y": 610
+              },
+              "type": "action",
+              "data": {
+                "type": "message-send",
+                "settings": {
+                  "default": {
+                    "type": "text",
+                    "content": "Opening Call Widget.... \n(Please click on the link, If not opened automatically.)"
+                  }
+                }
+              }
+            },
+            {
+              "id": "block_f810c7fe-275d-4eed-b957-0e127c94778a",
+              "position": {
+                "x": 1680,
+                "y": 853
+              },
+              "type": "event",
+              "data": {
+                "type": "message-action",
+                "settings": {
+                  "type": "button-click",
+                  "match": "choice_e57ef73d-4e51-4e0e-8a74-11de00f86fe3"
+                }
+              }
+            },
+            {
+              "id": "block_9bd087d1-1a5b-45e6-ab39-f6dc2d5709b0",
+              "position": {
+                "x": 1680,
+                "y": 971
+              },
+              "type": "action",
+              "data": {
+                "type": "message-send",
+                "settings": {
+                  "default": {
+                    "type": "text",
+                    "content": "Opening Call Widget.... \n(Please click on the link, If not opened automatically.)"
+                  }
+                }
+              }
+            },
+            {
+              "id": "block_368b1e17-63e1-4421-8bb9-f0f082c8a05a",
+              "position": {
+                "x": 1120,
+                "y": 971
+              },
+              "type": "exit",
+              "data": {
+                "type": "scenario",
+                "settings": {
+                  "scenario": "scenario_0a59c9b4-dc2c-4f44-a12c-05b7bacd2576"
+                }
+              }
+            },
+            {
+              "id": "block_1f9bbe10-d073-4924-b70e-faf36a9a26cb",
+              "position": {
+                "x": 1400,
+                "y": 610
+              },
+              "type": "exit",
+              "data": {
+                "type": "scenario",
+                "settings": {
+                  "scenario": "scenario_0a59c9b4-dc2c-4f44-a12c-05b7bacd2576"
+                }
+              }
+            }
+          ],
+          "wires": [
+            {
+              "id": "0_edge_id",
+              "source": "0_id",
+              "target": "2_id"
+            },
+            {
+              "id": "1_edge_id",
+              "source": "2_id",
+              "target": "1_id"
+            },
+            {
+              "id": "3_edge_id",
+              "source": "3_id",
+              "target": "4_id"
+            },
+            {
+              "id": "4_edge_id",
+              "source": "4_id",
+              "target": "5_id"
+            },
+            {
+              "id": "5_edge_id",
+              "source": "4_id",
+              "target": "6_id"
+            },
+            {
+              "id": "6_edge_id",
+              "source": "4_id",
+              "target": "7_id"
+            },
+            {
+              "id": "7_edge_id",
+              "source": "5_id",
+              "target": "8_id"
+            },
+            {
+              "id": "8_edge_id",
+              "source": "7_id",
+              "target": "9_id"
+            },
+            {
+              "id": "11_edge_id",
+              "source": "9_id",
+              "target": "12_id"
+            },
+            {
+              "id": "edge_b688e671-c66a-4128-8e8a-6730eef82dd7",
+              "source": "2_id",
+              "target": "block_c9253100-4d67-40ee-bc59-2bd52ba4e0e6"
+            },
+            {
+              "id": "edge_16fe53e3-5571-4586-8f80-8ab729fa5e0d",
+              "source": "block_702218a1-c634-474f-9e66-5956ff5ed402",
+              "target": "block_4c0ff059-85b8-440c-87e6-a59b41becd4f"
+            },
+            {
+              "id": "edge_ba5a841d-94d8-4925-accd-5a54f9bfee85",
+              "source": "8_id",
+              "target": "block_702218a1-c634-474f-9e66-5956ff5ed402"
+            },
+            {
+              "id": "edge_5e949533-614c-4ded-a033-e0fe88d9dceb",
+              "source": "1_id",
+              "target": "3_id"
+            },
+            {
+              "id": "edge_d7f97df3-39f2-4e66-93c8-b51adfd2a976",
+              "source": "block_c9253100-4d67-40ee-bc59-2bd52ba4e0e6",
+              "target": "block_cc8b8627-6faa-4eba-a8a1-52ba428f2c1c"
+            },
+            {
+              "id": "edge_611b33f1-fc3b-41e7-b0a3-f68ac7b4e981",
+              "source": "block_c9253100-4d67-40ee-bc59-2bd52ba4e0e6",
+              "target": "14_id"
+            },
+            {
+              "id": "edge_cc4f1742-0d4c-44f9-8c91-81f5fd1db7a4",
+              "source": "block_4c0ff059-85b8-440c-87e6-a59b41becd4f",
+              "target": "11_id"
+            },
+            {
+              "id": "edge_ec04405d-9787-4c96-bf36-3c396dabac81",
+              "source": "block_c9253100-4d67-40ee-bc59-2bd52ba4e0e6",
+              "target": "block_bed01a7a-4362-47d8-b634-af0f51e1ec1c"
+            },
+            {
+              "id": "edge_4d8cc49b-a3e2-42d5-9bf5-e387566e83c7",
+              "source": "block_bed01a7a-4362-47d8-b634-af0f51e1ec1c",
+              "target": "block_8012646c-4115-4afb-a25d-884b34650031"
+            },
+            {
+              "id": "edge_40ae9985-3094-47dc-8be8-fe013ce610b9",
+              "source": "4_id",
+              "target": "block_f810c7fe-275d-4eed-b957-0e127c94778a"
+            },
+            {
+              "id": "edge_779ec747-64e3-4cff-9bbe-a81ce0903bf9",
+              "source": "block_f810c7fe-275d-4eed-b957-0e127c94778a",
+              "target": "block_9bd087d1-1a5b-45e6-ab39-f6dc2d5709b0"
+            },
+            {
+              "id": "edge_db0b87da-407a-4049-b8fa-d6e176e271a3",
+              "source": "block_9bd087d1-1a5b-45e6-ab39-f6dc2d5709b0",
+              "target": "11_id"
+            },
+            {
+              "id": "edge_18471e3f-2d1a-414a-b654-257c5bdcd996",
+              "source": "6_id",
+              "target": "block_368b1e17-63e1-4421-8bb9-f0f082c8a05a"
+            },
+            {
+              "id": "edge_fb4e7439-9dbd-4b53-b824-ea33721a1d98",
+              "source": "block_cc8b8627-6faa-4eba-a8a1-52ba428f2c1c",
+              "target": "block_1f9bbe10-d073-4924-b70e-faf36a9a26cb"
+            },
+            {
+              "id": "edge_ffcd1709-d799-4d7c-856c-35e5318f4138",
+              "source": "block_8012646c-4115-4afb-a25d-884b34650031",
+              "target": "11_id"
+            }
+          ]
+        }
+      }
+    },
+    "humanHandoverScenario": {
+      "name": "Human Chat Handover",
+      "enabled": false,
+      "description": "Run Chat with human scenario.",
+      "updated_at": 1767843318395,
+      "author": "REMOVED",
+      "priority": 2,
+      "updated_author": "REMOVED",
+      "flow": {
+        "draft": {
+          "blocks": [
+            {
+              "id": "0_id",
+              "position": {
+                "x": 1400,
+                "y": 0
+              },
+              "type": "entry"
+            },
+            {
+              "id": "11_id",
+              "position": {
+                "x": 840,
+                "y": 646
+              },
+              "type": "exit",
+              "data": {
+                "type": "stop"
+              }
+            },
+            {
+              "id": "block_affc7209-af49-4e5b-bf39-79cef458bf3a",
+              "position": {
+                "x": 840,
+                "y": 332
+              },
+              "type": "action",
+              "data": {
+                "type": "message-send",
+                "subtype": "text",
+                "settings": {
+                  "default": {
+                    "type": "text",
+                    "content": "Oops! 🛌 Our support team is catching some Zzzs 😴. We'll be awake and back online 10:00 AM – 3:00 AM Dhaka time. \n\nDon't worry — you're at the top of our priority list!"
+                  }
+                }
+              }
+            },
+            {
+              "id": "block_1fb40e96-10ce-4550-8a29-6ca1024ba3e8",
+              "position": {
+                "x": 1120,
+                "y": 96
+              },
+              "type": "condition",
+              "data": {
+                "conditions": [
+                  {
+                    "type": "time-between",
+                    "settings": {
+                      "offset": -360,
+                      "range": {
+                        "from": "03:01",
+                        "to": "09:29"
+                      }
+                    }
+                  }
+                ],
+                "name": "Out of Office Hour"
+              }
+            },
+            {
+              "id": "block_3b7b6c6d-10ce-4415-a1e1-aba4f76b9f2d",
+              "position": {
+                "x": 1400,
+                "y": 96
+              },
+              "type": "condition",
+              "data": {
+                "conditions": [
+                  {
+                    "type": "time-between",
+                    "settings": {
+                      "offset": -360,
+                      "range": {
+                        "from": "09:30",
+                        "to": "05:59"
+                      }
+                    }
+                  }
+                ],
+                "name": "Office Hour (Day)"
+              }
+            },
+            {
+              "id": "block_3569b5cb-c385-4682-8da8-499ce9b552ff",
+              "position": {
+                "x": 1400,
+                "y": 332
+              },
+              "type": "action",
+              "data": {
+                "type": "message-send",
+                "settings": {
+                  "default": {
+                    "type": "text",
+                    "content": "Sure! Please hang on — human help is on the way."
+                  }
+                }
+              }
+            },
+            {
+              "id": "block_85f673ab-4cf3-45da-bb12-818dba08f7c1",
+              "position": {
+                "x": 840,
+                "y": 528
+              },
+              "type": "action",
+              "data": {
+                "type": "mention-operator",
+                "settings": {
+                  "operators": [
+                    {
+                      "user_id": "REMOVED_OPERATOR_1",
+                      "first_name": "operator1"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "block_5b3c92f0-cc8c-4c62-bdaf-83169eec1171",
+              "position": {
+                "x": 1400,
+                "y": 528
+              },
+              "type": "action",
+              "data": {
+                "type": "assign-operator",
+                "settings": {
+                  "user_id": "REMOVED_OPERATOR_1"
+                }
+              }
+            },
+            {
+              "id": "block_c2cb5277-feca-4b65-993d-64b4a964eb2d",
+              "position": {
+                "x": 840,
+                "y": 214
+              },
+              "type": "condition",
+              "data": {
+                "conditions": [
+                  {
+                    "type": "day-match",
+                    "settings": {
+                      "offset": -360,
+                      "days": [
+                        "friday",
+                        "sunday",
+                        "monday"
+                      ]
+                    }
+                  }
+                ],
+                "name": "Operator1 Schedule"
+              }
+            },
+            {
+              "id": "block_6f0f0949-94df-41c4-aa0f-1e21fd7a10b7",
+              "position": {
+                "x": 1120,
+                "y": 214
+              },
+              "type": "condition",
+              "data": {
+                "conditions": [
+                  {
+                    "type": "day-match",
+                    "settings": {
+                      "offset": -360,
+                      "days": [
+                        "saturday",
+                        "tuesday",
+                        "wednesday",
+                        "thursday"
+                      ]
+                    }
+                  }
+                ],
+                "name": "Operator2 Schedule"
+              }
+            },
+            {
+              "id": "block_aaf18fba-7f23-488f-a5b5-751df33f200f",
+              "position": {
+                "x": 1120,
+                "y": 332
+              },
+              "type": "action",
+              "data": {
+                "type": "message-send",
+                "settings": {
+                  "default": {
+                    "type": "text",
+                    "content": "Oops! 🛌 Our support team is catching some Zzzs 😴. We'll be awake and back online 10:00 AM – 3:00 AM Dhaka time. \n\nDon't worry — you're at the top of our priority list!"
+                  }
+                }
+              }
+            },
+            {
+              "id": "block_4f098567-bc48-41da-ba1d-c96b9e482fa5",
+              "position": {
+                "x": 1120,
+                "y": 528
+              },
+              "type": "action",
+              "data": {
+                "type": "mention-operator",
+                "settings": {
+                  "operators": [
+                    {
+                      "user_id": "REMOVED_OPERATOR_2",
+                      "first_name": "operator2"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "block_e2d7613a-da00-4360-97c3-b31b97e68858",
+              "position": {
+                "x": 1400,
+                "y": 214
+              },
+              "type": "condition",
+              "data": {
+                "conditions": [
+                  {
+                    "type": "day-match",
+                    "settings": {
+                      "offset": -360,
+                      "days": [
+                        "friday",
+                        "sunday",
+                        "monday"
+                      ]
+                    }
+                  }
+                ],
+                "name": "Operator1 Schedule"
+              }
+            },
+            {
+              "id": "block_40b3f998-49a6-4386-8bb4-3500e73aedbd",
+              "position": {
+                "x": 1680,
+                "y": 214
+              },
+              "type": "condition",
+              "data": {
+                "conditions": [
+                  {
+                    "type": "day-match",
+                    "settings": {
+                      "offset": -360,
+                      "days": [
+                        "tuesday",
+                        "wednesday",
+                        "thursday",
+                        "saturday"
+                      ]
+                    }
+                  }
+                ],
+                "name": "Operator2 Schedule"
+              }
+            },
+            {
+              "id": "block_f2948424-5ca4-41f5-94a1-bdd971666b6a",
+              "position": {
+                "x": 1680,
+                "y": 96
+              },
+              "type": "condition",
+              "data": {
+                "conditions": [
+                  {
+                    "type": "time-between",
+                    "settings": {
+                      "offset": -360,
+                      "range": {
+                        "from": "06:00",
+                        "to": "03:00"
+                      }
+                    }
+                  }
+                ],
+                "name": "Office Hour (Night)"
+              }
+            },
+            {
+              "id": "block_aa3c6d11-4bc9-4e40-80ee-4af055756639",
+              "position": {
+                "x": 1960,
+                "y": 214
+              },
+              "type": "condition",
+              "data": {
+                "conditions": [
+                  {
+                    "type": "day-match",
+                    "settings": {
+                      "offset": -360,
+                      "days": [
+                        "friday"
+                      ],
+                      "negate": true
+                    }
+                  }
+                ],
+                "name": "Operator3 Schedule"
+              }
+            },
+            {
+              "id": "block_4b346261-8fe1-4d23-9356-ed09ad11b0eb",
+              "position": {
+                "x": 1680,
+                "y": 332
+              },
+              "type": "action",
+              "data": {
+                "type": "message-send",
+                "settings": {
+                  "default": {
+                    "type": "text",
+                    "content": "Sure! Please hang on — human help is on the way."
+                  }
+                }
+              }
+            },
+            {
+              "id": "block_c4680b2a-d637-4312-a645-f57c9cd4e27f",
+              "position": {
+                "x": 1680,
+                "y": 528
+              },
+              "type": "action",
+              "data": {
+                "type": "assign-operator",
+                "settings": {
+                  "user_id": "REMOVED_OPERATOR_2"
+                }
+              }
+            },
+            {
+              "id": "block_9af556f3-d523-43aa-b5a4-8915c996270c",
+              "position": {
+                "x": 1960,
+                "y": 332
+              },
+              "type": "action",
+              "data": {
+                "type": "message-send",
+                "settings": {
+                  "default": {
+                    "type": "text",
+                    "content": "Sure! Please hang on — human help is on the way."
+                  }
+                }
+              }
+            },
+            {
+              "id": "block_d98a4069-9a04-4585-9b18-455f47fe1edb",
+              "position": {
+                "x": 1960,
+                "y": 528
+              },
+              "type": "action",
+              "data": {
+                "type": "assign-operator",
+                "settings": {
+                  "user_id": "REMOVED_OPERATOR_3"
+                }
+              }
+            }
+          ],
+          "wires": [
+            {
+              "id": "edge_609f9261-3968-4454-8f5e-7af4b84183e4",
+              "source": "block_affc7209-af49-4e5b-bf39-79cef458bf3a",
+              "target": "block_85f673ab-4cf3-45da-bb12-818dba08f7c1"
+            },
+            {
+              "id": "edge_a8c33344-3a38-4689-b21a-a108c7f56d5d",
+              "source": "block_3569b5cb-c385-4682-8da8-499ce9b552ff",
+              "target": "block_5b3c92f0-cc8c-4c62-bdaf-83169eec1171"
+            },
+            {
+              "id": "edge_c95f341b-90e7-447c-bb34-9c29fb234a76",
+              "source": "block_85f673ab-4cf3-45da-bb12-818dba08f7c1",
+              "target": "11_id"
+            },
+            {
+              "id": "edge_eb787843-bb74-4ea6-b4e1-34b6c403a530",
+              "source": "block_5b3c92f0-cc8c-4c62-bdaf-83169eec1171",
+              "target": "11_id"
+            },
+            {
+              "id": "edge_ab353f02-5807-450e-bbe9-ce38273bbd52",
+              "source": "block_1fb40e96-10ce-4550-8a29-6ca1024ba3e8",
+              "target": "block_c2cb5277-feca-4b65-993d-64b4a964eb2d"
+            },
+            {
+              "id": "edge_3109a177-939d-40f2-878a-65724e4999ef",
+              "source": "block_1fb40e96-10ce-4550-8a29-6ca1024ba3e8",
+              "target": "block_6f0f0949-94df-41c4-aa0f-1e21fd7a10b7"
+            },
+            {
+              "id": "edge_e98fab57-c986-4ab7-95cf-f55dce82ede6",
+              "source": "block_c2cb5277-feca-4b65-993d-64b4a964eb2d",
+              "target": "block_affc7209-af49-4e5b-bf39-79cef458bf3a"
+            },
+            {
+              "id": "edge_9a947f58-f177-4a5d-8751-9f39ee2f6616",
+              "source": "block_6f0f0949-94df-41c4-aa0f-1e21fd7a10b7",
+              "target": "block_aaf18fba-7f23-488f-a5b5-751df33f200f"
+            },
+            {
+              "id": "edge_efaa74be-e8ac-446e-8190-bf2d976c0e0c",
+              "source": "block_aaf18fba-7f23-488f-a5b5-751df33f200f",
+              "target": "block_4f098567-bc48-41da-ba1d-c96b9e482fa5"
+            },
+            {
+              "id": "edge_33d3150a-990d-4971-8209-f033654df4ba",
+              "source": "block_4f098567-bc48-41da-ba1d-c96b9e482fa5",
+              "target": "11_id"
+            },
+            {
+              "id": "edge_0b62b751-356e-461e-9840-6d6fa0b58a06",
+              "source": "block_3b7b6c6d-10ce-4415-a1e1-aba4f76b9f2d",
+              "target": "block_e2d7613a-da00-4360-97c3-b31b97e68858"
+            },
+            {
+              "id": "edge_db1f2873-3a1b-4a73-8c12-91694806adee",
+              "source": "block_3b7b6c6d-10ce-4415-a1e1-aba4f76b9f2d",
+              "target": "block_40b3f998-49a6-4386-8bb4-3500e73aedbd"
+            },
+            {
+              "id": "edge_cf2e2af3-d970-46d7-85c8-b0e6d24525d7",
+              "source": "block_f2948424-5ca4-41f5-94a1-bdd971666b6a",
+              "target": "block_aa3c6d11-4bc9-4e40-80ee-4af055756639"
+            },
+            {
+              "id": "edge_6108107d-cf63-4be5-8e7b-a0bbd49db37b",
+              "source": "block_e2d7613a-da00-4360-97c3-b31b97e68858",
+              "target": "block_3569b5cb-c385-4682-8da8-499ce9b552ff"
+            },
+            {
+              "id": "edge_6f7e1295-7e27-4898-bda1-a6941a67df8a",
+              "source": "block_40b3f998-49a6-4386-8bb4-3500e73aedbd",
+              "target": "block_4b346261-8fe1-4d23-9356-ed09ad11b0eb"
+            },
+            {
+              "id": "edge_63615829-71e8-4804-b430-326276600736",
+              "source": "block_4b346261-8fe1-4d23-9356-ed09ad11b0eb",
+              "target": "block_c4680b2a-d637-4312-a645-f57c9cd4e27f"
+            },
+            {
+              "id": "edge_0c9daa38-5441-44c4-8183-b413c7b703bf",
+              "source": "block_c4680b2a-d637-4312-a645-f57c9cd4e27f",
+              "target": "11_id"
+            },
+            {
+              "id": "edge_99c8f106-1aca-460d-84f3-0d6c127c090f",
+              "source": "block_aa3c6d11-4bc9-4e40-80ee-4af055756639",
+              "target": "block_9af556f3-d523-43aa-b5a4-8915c996270c"
+            },
+            {
+              "id": "edge_c7da83ea-3a1a-4d5b-a98d-bf0c40ab984b",
+              "source": "block_9af556f3-d523-43aa-b5a4-8915c996270c",
+              "target": "block_d98a4069-9a04-4585-9b18-455f47fe1edb"
+            },
+            {
+              "id": "edge_7c61dc6b-9b42-4e89-bb9c-1538a1dc01fe",
+              "source": "block_d98a4069-9a04-4585-9b18-455f47fe1edb",
+              "target": "11_id"
+            },
+            {
+              "id": "edge_60642889-cb6c-4a90-9b17-ff0ae11c9310",
+              "source": "0_id",
+              "target": "block_1fb40e96-10ce-4550-8a29-6ca1024ba3e8"
+            },
+            {
+              "id": "edge_5006115a-6270-4792-93c7-ae01525a92a1",
+              "source": "0_id",
+              "target": "block_3b7b6c6d-10ce-4415-a1e1-aba4f76b9f2d"
+            },
+            {
+              "id": "edge_7da273fe-0eb6-4a7a-828a-9cf73e3fdb88",
+              "source": "0_id",
+              "target": "block_f2948424-5ca4-41f5-94a1-bdd971666b6a"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "version": "1.0",
+  "created_at": "2024-01-15T00:00:00Z",
+  "system_prompt": "This is a comprehensive AI support chatbot system with intelligent human handover. It includes a main AI bot that answers queries from knowledge bases and a human handover scenario that routes to operators based on timezone-aware schedules.",
+  "integration": {
+    "knowledge_bases": [
+      "helpdesk",
+      "webpage"
+    ],
+    "operators": [
+      {
+        "id": "REMOVED_OPERATOR_1",
+        "schedule": [
+          "friday",
+          "sunday",
+          "monday"
+        ]
+      },
+      {
+        "id": "REMOVED_OPERATOR_2",
+        "schedule": [
+          "saturday",
+          "tuesday",
+          "wednesday",
+          "thursday"
+        ]
+      },
+      {
+        "id": "REMOVED_OPERATOR_3",
+        "schedule": "non-friday"
+      }
+    ],
+    "timezone": {
+      "offset": -360,
+      "description": "Dhaka time (UTC+6)"
+    }
+  }
+}

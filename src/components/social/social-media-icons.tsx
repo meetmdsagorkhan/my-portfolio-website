@@ -34,7 +34,7 @@ const SocialMediaButtons = () => {
   const ref = useRef<HTMLDivElement>(null);
   const show = useInView(ref, { once: true });
   return (
-    <div ref={ref} className="z-10">
+    <div ref={ref} className="z-10 flex items-center gap-2">
       {show &&
         BUTTONS.map((button) => (
           <Link href={button.href} key={button.name} target="_blank">

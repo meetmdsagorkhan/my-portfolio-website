@@ -20,14 +20,19 @@ function SmoothScroll({ children, isInsideModal = false }: LenisProps) {
     });
   }, []);
 
+  // When inside modal, just return children without Lenis wrapper for native scrolling
+  if (isInsideModal) {
+    return <>{children}</>;
+  }
+
   return (
     <ReactLenis
       root
       options={{
         duration: 2,
         prevent: (node) => {
-          if (isInsideModal) return true;
-          const modalOpen = node.classList.contains("modall");
+          // Prevent Lenis when modal is open
+          const modalOpen = document.querySelector('.modall') !== null;
           return modalOpen;
         },
       }}

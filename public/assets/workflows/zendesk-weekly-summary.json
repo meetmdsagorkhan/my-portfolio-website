@@ -1,0 +1,1072 @@
+{
+  "name": "Zendesk Weekly Summary",
+  "nodes": [
+    {
+      "parameters": {
+        "batchSize": 20,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1872,
+        -256
+      ],
+      "id": "0798abf4-376e-43a9-9553-b39ff824885e",
+      "name": "loop_20"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "75c53e5e-a690-41a8-b4b4-94e3fe2fe8db",
+              "name": "ticket_url",
+              "value": "={{ \"https://example.zendesk.com/tickets/\" + $('Merge').item.json.url.match(/tickets\\/(\\d+)/)[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "94825aed-e0f3-4024-bc8f-4659f3a9677c",
+              "name": "ticket_id",
+              "value": "={{ $('Merge').item.json.id }}",
+              "type": "number"
+            },
+            {
+              "id": "6980967c-5978-49de-a0d1-d736b8259b45",
+              "name": "summary",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "93fa15a8-6694-49f3-9d5a-b4bf7d3e8b4d",
+              "name": "ticket_count",
+              "value": "={{ $('Merge').all().length}}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1392,
+        -496
+      ],
+      "id": "c35f1bda-14f1-47e5-9e81-c5883b90095b",
+      "name": "set_data"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2688,
+        -256
+      ],
+      "id": "3152ca14-abf3-413a-a091-16760eb08423",
+      "name": "Wait",
+      "webhookId": "f789fc70-3b5e-456d-bd33-cd94fcdbf42a"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "summary",
+              "renameField": true,
+              "outputFieldName": "summaries"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1872,
+        -496
+      ],
+      "id": "f4b8a81b-b9ed-4a0c-87f3-5ebe4c0981fa",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "REMOVED",
+          "mode": "list",
+          "cachedResultName": "Weekly Tickets Summary",
+          "cachedResultUrl": "/projects/REMOVED/datatables/REMOVED"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ticket_count": "={{ $json.ticket_count }}",
+            "report_period": "={{ $('Get Date 1').item.json.report_period }}",
+            "final_summary": "={{ $json.final_summary }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "report_period",
+              "displayName": "report_period",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ticket_count",
+              "displayName": "ticket_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "final_summary",
+              "displayName": "final_summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2688,
+        -496
+      ],
+      "id": "3b89cc2b-bdc9-4614-91f6-3b0396fb6be8",
+      "name": "Weekly Tickets Summary"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "REMOVED",
+          "mode": "list",
+          "cachedResultName": "Weekly Tickets",
+          "cachedResultUrl": "/projects/REMOVED/datatables/REMOVED"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ticket_url": "={{ $json.ticket_url }}",
+            "ticket_id": "={{ $json.ticket_id }}",
+            "report_period": "={{ $('Get Date 1').first().json.report_period }}",
+            "summary": "={{ $json.summary }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "report_period",
+              "displayName": "report_period",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ticket_url",
+              "displayName": "ticket_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1616,
+        -496
+      ],
+      "id": "44dc24f7-f4e4-42fd-a37a-d2a1068280c5",
+      "name": "Weekly Tickets"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "024da248-aca3-451f-9e4d-2aa1e19dc622",
+              "name": "final_output",
+              "value": "=# Weekly Support Insights -\n\nReporting Period: {{ $('Get Date 1').first().json.report_period }}\nTotal Tickets Analyzed: {{ $('Merge').all().length}}\n\n## Top Issues\n\n{{ $json.output[0].content[0].text }}\n",
+              "type": "string"
+            },
+            {
+              "id": "6b6bf1f0-7c14-4179-b06c-7f7d6771f963",
+              "name": "final_summary",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "c7bc5357-6262-496d-bf51-65986b951fab",
+              "name": "ticket_count",
+              "value": "={{ $('Merge').all().length}}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2432,
+        -496
+      ],
+      "id": "73873ddd-2b61-4cac-8e17-300c276d4315",
+      "name": "final_data"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Read the support ticket subject and description below.\nIdentify the single primary problem the user is experiencing.\n\nOutput one short, clear sentence that:\nDescribes only the user's issue (not causes, solutions, apologies, or internal actions)\nIs specific and concrete, avoiding vague wording\nReflects the user's perspective, not the support team's\nDoes not repeat the subject verbatim unless necessary\n\nDo not include:\nMultiple issues\nSuggested fixes or explanations\nExtra context or assumptions\nFormatting, labels, or bullet points\n\nInput:\nSubject: {{ $json.subject }}\nDescription: {{ $json.description }}\n\nOutput:\nOne concise sentence summarizing the user's core problem."
+            },
+            {
+              "role": "system",
+              "content": "You are an expert at summarizing customer support issues."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        2112,
+        -256
+      ],
+      "id": "d8c3378f-ed74-48bc-8f43-e48ceac81f99",
+      "name": "get_summary",
+      "credentials": {
+        "openAiApi": {
+          "id": "REMOVED",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are given a list of support ticket issue summaries.\n\nGroup the summaries into distinct, specific issue categories based on the actual user problems described.\n\nRules for categorization:\nEach summary must belong to one and only one category\nCategory names must be clear, specific, and human-readable\nDo NOT use vague labels such as 'Other', 'General', or 'Miscellaneous'\nDo NOT invent categories that are not supported by the data\nMerge categories that describe the same underlying issue using different wording\n\nFor each category:\nProvide the category name\nProvide the exact count of summaries in that category\n\nOutput requirements:\nRank categories by count in descending order\nOutput only a clean Markdown list\nDo not include explanations, examples, or commentary\n\nInput: \n{{ $json[\"summaries\"].join(\"\\n- \") }}\n"
+            },
+            {
+              "role": "system",
+              "content": "You are an expert in customer support ticket analysis."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        2112,
+        -496
+      ],
+      "id": "0d5b6ba8-66af-4ebb-a36a-0635ae92843d",
+      "name": "get_category_count",
+      "credentials": {
+        "openAiApi": {
+          "id": "REMOVED",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const BDT_OFFSET = 6; // BDT = UTC +6\nconst now = new Date(); // runtime (UTC)\n\n// Helpers\nconst formatDate = (date) => date.toISOString().split(\"T\")[0];\nconst formatISO  = (date) => date.toISOString();\n\n// --------------------\n// CURRENT DAY (BDT, date-only)\nconst current_date = new Date(now);\ncurrent_date.setUTCHours(0, 0, 0, 0);\n\n// --------------------\n// END = today 6:00 PM BDT → convert to UTC\nconst end_date = new Date(current_date);\nend_date.setUTCHours(18 - BDT_OFFSET, 0, 0, 0); // 6 PM BDT\n\n// --------------------\n// START = 7 days before end, 6:05 PM BDT → UTC\nconst start_date = new Date(end_date);\nstart_date.setDate(start_date.getDate() - 7);\nstart_date.setUTCHours(18 - BDT_OFFSET, 5, 0, 0); // 6:05 PM BDT\n\n// --------------------\n// REPORT PERIOD (date only, BDT logic)\nconst report_start = new Date(start_date);\nreport_start.setDate(report_start.getDate());\n\nreturn [\n  {\n    json: {\n      start_iso: formatISO(start_date), // UTC\n      end_iso: formatISO(end_date),     // UTC\n\n      start_date: formatDate(start_date),\n      end_date: formatDate(end_date),\n\n      report_period: `${formatDate(report_start)} to ${formatDate(current_date)}`\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        -560
+      ],
+      "id": "cb82ff83-57b3-48da-81a8-97c0cb2d66d8",
+      "name": "Get Date 1"
+    },
+    {
+      "parameters": {
+        "url": "=https://example.zendesk.com/api/v2/search.json",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "=type:ticket created>{{ $json.start_iso }} created<{{ $json.end_iso }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        768,
+        -560
+      ],
+      "id": "716f553e-8e67-4e1a-91f6-aa933157dff9",
+      "name": "Fetch Page 1",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "365ad241-9ee9-42d0-bf3d-08d20700de38",
+              "name": "page_2",
+              "value": "={{ $('Fetch Page 1').item.json.next_page }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        -368
+      ],
+      "id": "e35d9f16-99cf-4717-a941-2936fd490f71",
+      "name": "Page 2"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.page_2 }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        768,
+        -368
+      ],
+      "id": "977971c1-b8c0-467a-9740-f925eaa71867",
+      "name": "Fetch Page 2",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        944,
+        -560
+      ],
+      "id": "c49412ac-06d6-4dbb-85d9-508485661339",
+      "name": "Split Page 1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        944,
+        -368
+      ],
+      "id": "33e80211-78e5-47da-a5e9-6d2ab2527c47",
+      "name": "Split Page 2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3e7f5998-e066-4435-a72e-8e8bc5b90279",
+              "leftValue": "={{ $('Fetch Page 1').item.json.next_page }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        -368
+      ],
+      "id": "8c6979da-2013-4953-a198-9a726e8b3d69",
+      "name": "Page 2?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3e7f5998-e066-4435-a72e-8e8bc5b90279",
+              "leftValue": "={{ $('Fetch Page 2').item.json.next_page }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        -160
+      ],
+      "id": "123f627c-651e-4bcd-a98f-5cacdd128a8a",
+      "name": "Page 3?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3e7f5998-e066-4435-a72e-8e8bc5b90279",
+              "leftValue": "={{ $('Fetch Page 3').item.json.next_page }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        48
+      ],
+      "id": "06fcdd3b-2f8c-4ca6-913c-b314aa7ecc5a",
+      "name": "Page 4?"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        944,
+        -160
+      ],
+      "id": "832a4e11-e0fa-4fdf-ba39-7671b4222445",
+      "name": "Split Page 3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "365ad241-9ee9-42d0-bf3d-08d20700de38",
+              "name": "page_3",
+              "value": "={{ $('Fetch Page 2').item.json.next_page }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        -160
+      ],
+      "id": "ebd474c2-5033-4e7c-8be6-cfaa221f6ab5",
+      "name": "Page 3"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.page_3 }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        768,
+        -160
+      ],
+      "id": "c0612270-fdc4-4fe6-b90e-373bdfc7ab52",
+      "name": "Fetch Page 3",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "365ad241-9ee9-42d0-bf3d-08d20700de38",
+              "name": "page_4",
+              "value": "={{ $('Fetch Page 3').item.json.next_page }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        48
+      ],
+      "id": "4a57c7ce-0599-4bef-bc16-e066afb87698",
+      "name": "Page 4"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.page_4 }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        768,
+        48
+      ],
+      "id": "0898e28e-7295-4ede-95e6-def136543b8d",
+      "name": "Fetch Page 4",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        944,
+        48
+      ],
+      "id": "916a9d20-8ad4-405d-ab2a-53acc439711b",
+      "name": "Split Page 4"
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1392,
+        -288
+      ],
+      "id": "24ab9f74-8313-4d4c-94e9-162170742262",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                5
+              ],
+              "triggerAtHour": 18,
+              "triggerAtMinute": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        -560
+      ],
+      "id": "8cc7de96-658a-47c6-ade0-9518fc8138d7",
+      "name": "Start"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -704
+      ],
+      "id": "b5074895-a269-4c84-8c29-2be3b22a2041",
+      "name": "End"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "loop_20": {
+      "main": [
+        [
+          {
+            "node": "set_data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get_summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "loop_20",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set_data": {
+      "main": [
+        [
+          {
+            "node": "Weekly Tickets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "get_category_count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly Tickets": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "final_data": {
+      "main": [
+        [
+          {
+            "node": "Weekly Tickets Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly Tickets Summary": {
+      "main": [
+        [
+          {
+            "node": "End",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_summary": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_category_count": {
+      "main": [
+        [
+          {
+            "node": "final_data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Date 1": {
+      "main": [
+        [
+          {
+            "node": "Fetch Page 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Page 1": {
+      "main": [
+        [
+          {
+            "node": "Split Page 1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Page 2?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page 2": {
+      "main": [
+        [
+          {
+            "node": "Fetch Page 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Page 2": {
+      "main": [
+        [
+          {
+            "node": "Split Page 2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Page 3?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Page 1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page 2?": {
+      "main": [
+        [
+          {
+            "node": "Page 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "End",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page 3?": {
+      "main": [
+        [
+          {
+            "node": "Page 3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "End",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page 3": {
+      "main": [
+        [
+          {
+            "node": "Fetch Page 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Page 3": {
+      "main": [
+        [
+          {
+            "node": "Split Page 3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Page 4?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page 4": {
+      "main": [
+        [
+          {
+            "node": "Fetch Page 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Page 4": {
+      "main": [
+        [
+          {
+            "node": "Split Page 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page 4?": {
+      "main": [
+        [
+          {
+            "node": "Page 4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "End",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Page 2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Split Page 3": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Split Page 4": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "loop_20",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Get Date 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "997f4d23-b701-469d-a5b0-481172a9c0cd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "513dd4a16179a0f69370a160bc098697921c3c85d88ed306fa8ad565e8b80322"
+  },
+  "id": "EHtN3kzKiaeAdoOU"
+}

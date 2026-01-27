@@ -1,0 +1,421 @@
+{
+  "name": "Transaction Failure Email Automation",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        384,
+        320
+      ],
+      "id": "webhook-trigger",
+      "name": "Transaction Webhook"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        576,
+        320
+      ],
+      "id": "split-out-rows",
+      "name": "Split Out Rows"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "seconds"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        768,
+        320
+      ],
+      "id": "wait-node",
+      "name": "Wait"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "status-condition",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "failed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        960,
+        320
+      ],
+      "id": "status-check",
+      "name": "Status Check"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract user ID from transaction data\nconst userId = $json.user_id || $json.customer_id || $json.customerId;\nreturn [{\n  json: {\n    user_id: userId\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        320
+      ],
+      "id": "get-user-id",
+      "name": "Get UserID"
+    },
+    {
+      "parameters": {
+        "url": "https://api.example.com/v1/users/{{ $json.user_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "apiKey",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1344,
+        320
+      ],
+      "id": "get-user-data",
+      "name": "Get User Data",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "REMOVED",
+          "name": "User API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "user-email",
+              "name": "user_email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "user-name",
+              "name": "user_name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "transaction-id",
+              "name": "transaction_id",
+              "value": "={{ $('Transaction Webhook').item.json.transaction_id }}",
+              "type": "string"
+            },
+            {
+              "id": "transaction-amount",
+              "name": "transaction_amount",
+              "value": "={{ $('Transaction Webhook').item.json.amount }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1536,
+        320
+      ],
+      "id": "set-user-data",
+      "name": "Set User Data"
+    },
+    {
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "url": "https://example.zendesk.com/api/v2/tickets",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "ticket",
+              "value": "={{ {\n  \"subject\": \"Transaction Failed: {{ $json.transaction_id }}\",\n  \"comment\": {\n    \"body\": \"Transaction ID: {{ $json.transaction_id }}\\\nAmount: {{ $json.transaction_amount }}\\\nUser: {{ $json.user_name }} ({{ $json.user_email }})\\\n\\nThis transaction failed and requires manual review.\"\n  },\n  \"requester\": {\n    \"name\": \"{{ $json.user_name }}\",\n    \"email\": \"{{ $json.user_email }}\"\n  },\n  \"priority\": \"high\"\n} }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1728,
+        320
+      ],
+      "id": "create-ticket",
+      "name": "Create a ticket",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "REMOVED",
+          "name": "Support System API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Check if ticket creation was successful\nconst ticketCreated = $json.ticket && $json.ticket.id ? true : false;\n\nreturn [{\n  json: {\n    ticket_created: ticketCreated,\n    ticket_id: $json.ticket?.id || null,\n    transaction_id: $json.transaction_id\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        320
+      ],
+      "id": "ticket-created-check",
+      "name": "Ticket Created Check"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "ticket-created-true",
+              "leftValue": "={{ $json.ticket_created }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2112,
+        320
+      ],
+      "id": "ticket-created-true",
+      "name": "Ticket Created TRUE"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ new Date().toISOString() }}",
+            "transaction_id": "={{ $json.transaction_id }}",
+            "ticket_id": "={{ $json.ticket_id }}",
+            "status": "ticket_created",
+            "user_email": "={{ $json.user_email }}"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        2304,
+        240
+      ],
+      "id": "update-sheet-success",
+      "name": "Update Sheet - Success",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REMOVED",
+          "name": "Google Sheets API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ new Date().toISOString() }}",
+            "transaction_id": "={{ $json.transaction_id }}",
+            "ticket_id": "null",
+            "status": "ticket_failed",
+            "user_email": "={{ $json.user_email }}",
+            "error": "={{ $json.error || 'Ticket creation failed' }}"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        2304,
+        400
+      ],
+      "id": "update-sheet-failed",
+      "name": "Update Sheet - Failed",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REMOVED",
+          "name": "Google Sheets API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Transaction Webhook": {
+      "main": [
+        [
+          {
+            "node": "Split Out Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Rows": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Status Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status Check": {
+      "main": [
+        [
+          {
+            "node": "Get UserID",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Logs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get UserID": {
+      "main": [
+        [
+          {
+            "node": "Get User Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get User Data": {
+      "main": [
+        [
+          {
+            "node": "Set User Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set User Data": {
+      "main": [
+        [
+          {
+            "node": "Create a ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a ticket": {
+      "main": [
+        [
+          {
+            "node": "Ticket Created Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ticket Created Check": {
+      "main": [
+        [
+          {
+            "node": "Ticket Created TRUE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ticket Created TRUE": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet - Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Sheet - Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "id": "REMOVED",
+  "tags": []
+}

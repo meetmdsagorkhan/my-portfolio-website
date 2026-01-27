@@ -1,0 +1,1838 @@
+{
+  "name": "Chat Analysis Weekly Summary",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.example.com/v1/website/WEBSITE_ID/conversations/1?per_page=50",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filter_date_start",
+              "value": "={{ $json.start_ts }}"
+            },
+            {
+              "name": "filter_date_end",
+              "value": "={{ $json.end_ts }}"
+            },
+            {
+              "name": "order_date_created",
+              "value": "asc"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Crisp-Tier",
+              "value": "plugin"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        848,
+        -784
+      ],
+      "id": "7bbf7fb5-890f-4bcd-8a3e-c94e2dc17dbb",
+      "name": "Fetch Page 1",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API Credentials"
+        },
+        "httpBasicAuth": {
+          "id": "REMOVED",
+          "name": "Chat API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const start_ts = Number($('Get Date 1').first().json.start_ts);\nconst end_ts   = Number($('Get Date 1').first().json.end_ts);\n\n// Use a map to avoid duplicates\nconst unique = {};\n\nfor (const item of items) {\n  const sessionId = item.json.session_id || item.json.id;\n  if (!sessionId) continue;\n\n  // Crisp timestamps are in milliseconds\n  const createdMs = Number(item.json.created_at);\n  const updatedMs = Number(item.json.updated_at);\n\n  const createdSec = createdMs ? Math.floor(createdMs / 1000) : null;\n  const updatedSec = updatedMs ? Math.floor(updatedMs / 1000) : null;\n\n  const createdMatch =\n    createdSec !== null &&\n    createdSec >= start_ts &&\n    createdSec <= end_ts;\n\n  const updatedMatch =\n    updatedSec !== null &&\n    updatedSec >= start_ts &&\n    updatedSec <= end_ts;\n\n  // OR logic\n  if (createdMatch || updatedMatch) {\n    unique[sessionId] = item; // overwrite safely → no duplicates\n  }\n}\n\n// Convert map to array\nconst result = Object.values(unique);\n\n// Fallback for IF node\nif (result.length === 0) {\n  return [{\n    json: {\n      hasMatch: false\n    }\n  }];\n}\n\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        -784
+      ],
+      "id": "10de2e41-9fdc-492c-b701-9393ad442a68",
+      "name": "Filter Page 1",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        -784
+      ],
+      "id": "87d59df1-3ecb-443c-830d-421dc5bc1fba",
+      "name": "Split Page 1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        -560
+      ],
+      "id": "50277cf0-03ed-4135-906d-78687d8fe8c9",
+      "name": "Split Page 2"
+    },
+    {
+      "parameters": {
+        "url": "https://api.example.com/v1/website/WEBSITE_ID/conversations/2?per_page=50",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filter_date_start",
+              "value": "={{ $json.start_ts }}"
+            },
+            {
+              "name": "filter_date_end",
+              "value": "={{ $json.end_ts }}"
+            },
+            {
+              "name": "order_date_created",
+              "value": "asc"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Crisp-Tier",
+              "value": "plugin"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        848,
+        -560
+      ],
+      "id": "6afce274-2ada-4be6-9adf-7cfcde5332dd",
+      "name": "Fetch Page 2",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API Credentials"
+        },
+        "httpBasicAuth": {
+          "id": "REMOVED",
+          "name": "Chat API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const BDT_OFFSET = 6; // BDT = UTC+6\n\n// End = this Friday 6 PM BDT\nconst end = new Date();\nend.setHours(18, 0, 0, 0);\n\n// Start = previous Friday 6:05 PM BDT\nconst start = new Date(end);\nstart.setDate(start.getDate() - 7);\nstart.setHours(18, 5, 0, 0);\n\n// Convert to ISO UTC\nconst start_iso = new Date(start.getTime() - BDT_OFFSET*60*60*1000).toISOString();\nconst end_iso   = new Date(end.getTime() - BDT_OFFSET*60*60*1000).toISOString();\n\n// Convert to Unix timestamps (seconds)\nconst start_ts = Math.floor((start.getTime() - BDT_OFFSET*60*60*1000)/1000);\nconst end_ts   = Math.floor((end.getTime() - BDT_OFFSET*60*60*1000)/1000);\n\n// Generate human-readable report period (BDT)\nconst formatDate = d => {\n  const year = d.getFullYear();\n  const month = String(d.getMonth()+1).padStart(2,'0');\n  const day = String(d.getDate()).padStart(2,'0');\n  return `${year}-${month}-${day}`;\n};\n\nconst report_period = `${formatDate(start)} to ${formatDate(end)}`;\n\nreturn [{\n  json: {\n    start_ts,\n    end_ts,\n    report_period\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        -784
+      ],
+      "id": "03cebd8d-6410-415b-8b27-6b414842d210",
+      "name": "Get Date 1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ab6b0462-4ea4-4378-af1b-b386b7a9aa2f",
+              "leftValue": "={{ $json.hasMatch }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "da95141b-289d-4b9c-b4e1-c4de990020c5",
+              "leftValue": "={{ $json.session_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1440,
+        -784
+      ],
+      "id": "a5b728bc-3dee-4318-a44c-1d7137be297f",
+      "name": "Next Page 1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const BDT_OFFSET = 6; // BDT = UTC+6\n\n// End = this Friday 6 PM BDT\nconst end = new Date();\nend.setHours(18, 0, 0, 0);\n\n// Start = previous Friday 6:05 PM BDT\nconst start = new Date(end);\nstart.setDate(start.getDate() - 7);\nstart.setHours(18, 5, 0, 0);\n\n// Convert to ISO UTC\nconst start_iso = new Date(start.getTime() - BDT_OFFSET*60*60*1000).toISOString();\nconst end_iso   = new Date(end.getTime() - BDT_OFFSET*60*60*1000).toISOString();\n\n// Convert to Unix timestamps (seconds)\nconst start_ts = Math.floor((start.getTime() - BDT_OFFSET*60*60*1000)/1000);\nconst end_ts   = Math.floor((end.getTime() - BDT_OFFSET*60*60*1000)/1000);\n\n// Generate human-readable report period (BDT)\nconst formatDate = d => {\n  const year = d.getFullYear();\n  const month = String(d.getMonth()+1).padStart(2,'0');\n  const day = String(d.getDate()).padStart(2,'0');\n  return `${year}-${month}-${day}`;\n};\n\nconst report_period = `${formatDate(start)} to ${formatDate(end)}`;\n\nreturn [{\n  json: {\n    start_ts,\n    end_ts,\n    report_period\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        -560
+      ],
+      "id": "abbc3a0c-f9ca-4c16-b850-02fb50529d37",
+      "name": "Get Date 2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const start_ts = Number($('Get Date 1').first().json.start_ts);\nconst end_ts   = Number($('Get Date 1').first().json.end_ts);\n\n// Use a map to avoid duplicates\nconst unique = {};\n\nfor (const item of items) {\n  const sessionId = item.json.session_id || item.json.id;\n  if (!sessionId) continue;\n\n  // Crisp timestamps are in milliseconds\n  const createdMs = Number(item.json.created_at);\n  const updatedMs = Number(item.json.updated_at);\n\n  const createdSec = createdMs ? Math.floor(createdMs / 1000) : null;\n  const updatedSec = updatedMs ? Math.floor(updatedMs / 1000) : null;\n\n  const createdMatch =\n    createdSec !== null &&\n    createdSec >= start_ts &&\n    createdSec <= end_ts;\n\n  const updatedMatch =\n    updatedSec !== null &&\n    updatedSec >= start_ts &&\n    updatedSec <= end_ts;\n\n  // OR logic\n  if (createdMatch || updatedMatch) {\n    unique[sessionId] = item; // overwrite safely → no duplicates\n  }\n}\n\n// Convert map to array\nconst result = Object.values(unique);\n\n// Fallback for IF node\nif (result.length === 0) {\n  return [{\n    json: {\n      hasMatch: false\n    }\n  }];\n}\n\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        -560
+      ],
+      "id": "d78e491d-5a2f-4092-a7c2-46529dc46e87",
+      "name": "Filter Page 2",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ab6b0462-4ea4-4378-af1b-b386b7a9aa2f",
+              "leftValue": "={{ $json.hasMatch }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "7c30bb8d-be42-4069-bda7-eeb7b6587667",
+              "leftValue": "={{ $json.session_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1440,
+        -560
+      ],
+      "id": "0b08554b-1168-4817-bf83-60babd807067",
+      "name": "Next Page 2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        -336
+      ],
+      "id": "13930f36-9821-4338-8c14-d47f06420b63",
+      "name": "Split Page 3"
+    },
+    {
+      "parameters": {
+        "url": "https://api.example.com/v1/website/WEBSITE_ID/conversations/3?per_page=50",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filter_date_start",
+              "value": "={{ $json.start_ts }}"
+            },
+            {
+              "name": "filter_date_end",
+              "value": "={{ $json.end_ts }}"
+            },
+            {
+              "name": "order_date_created",
+              "value": "asc"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Crisp-Tier",
+              "value": "plugin"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        848,
+        -336
+      ],
+      "id": "79eea6a9-9dc7-4ed1-afd8-89a8c715880b",
+      "name": "Fetch Page 3",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API Credentials"
+        },
+        "httpBasicAuth": {
+          "id": "REMOVED",
+          "name": "Chat API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const BDT_OFFSET = 6; // BDT = UTC+6\n\n// End = this Friday 6 PM BDT\nconst end = new Date();\nend.setHours(18, 0, 0, 0);\n\n// Start = previous Friday 6:05 PM BDT\nconst start = new Date(end);\nstart.setDate(start.getDate() - 7);\nstart.setHours(18, 5, 0, 0);\n\n// Convert to ISO UTC\nconst start_iso = new Date(start.getTime() - BDT_OFFSET*60*60*1000).toISOString();\nconst end_iso   = new Date(end.getTime() - BDT_OFFSET*60*60*1000).toISOString();\n\n// Convert to Unix timestamps (seconds)\nconst start_ts = Math.floor((start.getTime() - BDT_OFFSET*60*60*1000)/1000);\nconst end_ts   = Math.floor((end.getTime() - BDT_OFFSET*60*60*1000)/1000);\n\n// Generate human-readable report period (BDT)\nconst formatDate = d => {\n  const year = d.getFullYear();\n  const month = String(d.getMonth()+1).padStart(2,'0');\n  const day = String(d.getDate()).padStart(2,'0');\n  return `${year}-${month}-${day}`;\n};\n\nconst report_period = `${formatDate(start)} to ${formatDate(end)}`;\n\nreturn [{\n  json: {\n    start_ts,\n    end_ts,\n    report_period\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        -336
+      ],
+      "id": "ec201e15-8a2a-4ca0-940c-05de7feedd41",
+      "name": "Get Date 3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const start_ts = Number($('Get Date 3').first().json.start_ts);\nconst end_ts   = Number($('Get Date 3').first().json.end_ts);\n\n// Use a map to avoid duplicates\nconst unique = {};\n\nfor (const item of items) {\n  const sessionId = item.json.session_id || item.json.id;\n  if (!sessionId) continue;\n\n  // Crisp timestamps are in milliseconds\n  const createdMs = Number(item.json.created_at);\n  const updatedMs = Number(item.json.updated_at);\n\n  const createdSec = createdMs ? Math.floor(createdMs / 1000) : null;\n  const updatedSec = updatedMs ? Math.floor(updatedMs / 1000) : null;\n\n  const createdMatch =\n    createdSec !== null &&\n    createdSec >= start_ts &&\n    createdSec <= end_ts;\n\n  const updatedMatch =\n    updatedSec !== null &&\n    updatedSec >= start_ts &&\n    updatedSec <= end_ts;\n\n  // OR logic\n  if (createdMatch || updatedMatch) {\n    unique[sessionId] = item; // overwrite safely → no duplicates\n  }\n}\n\n// Convert map to array\nconst result = Object.values(unique);\n\n// Fallback for IF node\nif (result.length === 0) {\n  return [{\n    json: {\n      hasMatch: false\n    }\n  }];\n}\n\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        -336
+      ],
+      "id": "22e5e7f9-912d-4741-b308-8dd8078d03d1",
+      "name": "Filter Page 3",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ab6b0462-4ea4-4378-af1b-b386b7a9aa2f",
+              "leftValue": "={{ $json.hasMatch }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "5cc854e0-f110-4dd2-b76d-c8978637d3c0",
+              "leftValue": "={{ $json.session_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1440,
+        -336
+      ],
+      "id": "cbd346be-3e7e-495b-b2f7-0dd625403723",
+      "name": "Next Page 3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        -112
+      ],
+      "id": "19196f16-2492-4aa5-8f41-839a4397207f",
+      "name": "Split Page 4"
+    },
+    {
+      "parameters": {
+        "url": "https://api.example.com/v1/website/WEBSITE_ID/conversations/4?per_page=50",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filter_date_start",
+              "value": "={{ $json.start_ts }}"
+            },
+            {
+              "name": "filter_date_end",
+              "value": "={{ $json.end_ts }}"
+            },
+            {
+              "name": "order_date_created",
+              "value": "asc"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Crisp-Tier",
+              "value": "plugin"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        848,
+        -112
+      ],
+      "id": "60ff38b7-52fd-4396-bad2-a9af825392cd",
+      "name": "Fetch Page 4",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API Credentials"
+        },
+        "httpBasicAuth": {
+          "id": "REMOVED",
+          "name": "Chat API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const BDT_OFFSET = 6; // BDT = UTC+6\n\n// End = this Friday 6 PM BDT\nconst end = new Date();\nend.setHours(18, 0, 0, 0);\n\n// Start = previous Friday 6:05 PM BDT\nconst start = new Date(end);\nstart.setDate(start.getDate() - 7);\nstart.setHours(18, 5, 0, 0);\n\n// Convert to ISO UTC\nconst start_iso = new Date(start.getTime() - BDT_OFFSET*60*60*1000).toISOString();\nconst end_iso   = new Date(end.getTime() - BDT_OFFSET*60*60*1000).toISOString();\n\n// Convert to Unix timestamps (seconds)\nconst start_ts = Math.floor((start.getTime() - BDT_OFFSET*60*60*1000)/1000);\nconst end_ts   = Math.floor((end.getTime() - BDT_OFFSET*60*60*1000)/1000);\n\n// Generate human-readable report period (BDT)\nconst formatDate = d => {\n  const year = d.getFullYear();\n  const month = String(d.getMonth()+1).padStart(2,'0');\n  const day = String(d.getDate()).padStart(2,'0');\n  return `${year}-${month}-${day}`;\n};\n\nconst report_period = `${formatDate(start)} to ${formatDate(end)}`;\n\nreturn [{\n  json: {\n    start_ts,\n    end_ts,\n    report_period\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        -112
+      ],
+      "id": "23680018-c5e0-4d61-9a3f-61906c2ff05e",
+      "name": "Get Date 4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const start_ts = Number($('Get Date 4').first().json.start_ts);\nconst end_ts   = Number($('Get Date 4').first().json.end_ts);\n\n// Use a map to avoid duplicates\nconst unique = {};\n\nfor (const item of items) {\n  const sessionId = item.json.session_id || item.json.id;\n  if (!sessionId) continue;\n\n  // Crisp timestamps are in milliseconds\n  const createdMs = Number(item.json.created_at);\n  const updatedMs = Number(item.json.updated_at);\n\n  const createdSec = createdMs ? Math.floor(createdMs / 1000) : null;\n  const updatedSec = updatedMs ? Math.floor(updatedMs / 1000) : null;\n\n  const createdMatch =\n    createdSec !== null &&\n    createdSec >= start_ts &&\n    createdSec <= end_ts;\n\n  const updatedMatch =\n    updatedSec !== null &&\n    updatedSec >= start_ts &&\n    updatedSec <= end_ts;\n\n  // OR logic\n  if (createdMatch || updatedMatch) {\n    unique[sessionId] = item; // overwrite safely → no duplicates\n  }\n}\n\n// Convert map to array\nconst result = Object.values(unique);\n\n// Fallback for IF node\nif (result.length === 0) {\n  return [{\n    json: {\n      hasMatch: false\n    }\n  }];\n}\n\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        -112
+      ],
+      "id": "1833e30b-5687-400f-90cc-b0cd84afaf2a",
+      "name": "Filter Page 4",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ab6b0462-4ea4-4378-af1b-b386b7a9aa2f",
+              "leftValue": "={{ $json.hasMatch }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "8763ed5a-3dcd-4109-a77f-1febeae7ae97",
+              "leftValue": "={{ $json.session_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1440,
+        -112
+      ],
+      "id": "81dcc7fd-ae75-40ad-894c-fdc418883efe",
+      "name": "Next Page 4"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        128
+      ],
+      "id": "85c56a2e-facc-4c72-9a26-f6084cb098aa",
+      "name": "Split Page 5"
+    },
+    {
+      "parameters": {
+        "url": "https://api.example.com/v1/website/WEBSITE_ID/conversations/5?per_page=50",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filter_date_start",
+              "value": "={{ $json.start_ts }}"
+            },
+            {
+              "name": "filter_date_end",
+              "value": "={{ $json.end_ts }}"
+            },
+            {
+              "name": "order_date_created",
+              "value": "asc"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Crisp-Tier",
+              "value": "plugin"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        848,
+        128
+      ],
+      "id": "02b9eeab-b6ab-4097-8faf-1019dd029aa9",
+      "name": "Fetch Page 5",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API Credentials"
+        },
+        "httpBasicAuth": {
+          "id": "REMOVED",
+          "name": "Chat API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const BDT_OFFSET = 6; // BDT = UTC+6\n\n// End = this Friday 6 PM BDT\nconst end = new Date();\nend.setHours(18, 0, 0, 0);\n\n// Start = previous Friday 6:05 PM BDT\nconst start = new Date(end);\nstart.setDate(start.getDate() - 7);\nstart.setHours(18, 5, 0, 0);\n\n// Convert to ISO UTC\nconst start_iso = new Date(start.getTime() - BDT_OFFSET*60*60*1000).toISOString();\nconst end_iso   = new Date(end.getTime() - BDT_OFFSET*60*60*1000).toISOString();\n\n// Convert to Unix timestamps (seconds)\nconst start_ts = Math.floor((start.getTime() - BDT_OFFSET*60*60*1000)/1000);\nconst end_ts   = Math.floor((end.getTime() - BDT_OFFSET*60*60*1000)/1000);\n\n// Generate human-readable report period (BDT)\nconst formatDate = d => {\n  const year = d.getFullYear();\n  const month = String(d.getMonth()+1).padStart(2,'0');\n  const day = String(d.getDate()).padStart(2,'0');\n  return `${year}-${month}-${day}`;\n};\n\nconst report_period = `${formatDate(start)} to ${formatDate(end)}`;\n\nreturn [{\n  json: {\n    start_ts,\n    end_ts,\n    report_period\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        128
+      ],
+      "id": "6d9a9071-143e-4749-9fa6-eaa96bdbd507",
+      "name": "Get Date 5"
+    },
+    {
+      "parameters": {
+        "jsCode": "const start_ts = Number($('Get Date 5').first().json.start_ts);\nconst end_ts   = Number($('Get Date 5').first().json.end_ts);\n\n// Use a map to avoid duplicates\nconst unique = {};\n\nfor (const item of items) {\n  const sessionId = item.json.session_id || item.json.id;\n  if (!sessionId) continue;\n\n  // Crisp timestamps are in milliseconds\n  const createdMs = Number(item.json.created_at);\n  const updatedMs = Number(item.json.updated_at);\n\n  const createdSec = createdMs ? Math.floor(createdMs / 1000) : null;\n  const updatedSec = updatedMs ? Math.floor(updatedMs / 1000) : null;\n\n  const createdMatch =\n    createdSec !== null &&\n    createdSec >= start_ts &&\n    createdSec <= end_ts;\n\n  const updatedMatch =\n    updatedSec !== null &&\n    updatedSec >= start_ts &&\n    updatedSec <= end_ts;\n\n  // OR logic\n  if (createdMatch || updatedMatch) {\n    unique[sessionId] = item; // overwrite safely → no duplicates\n  }\n}\n\n// Convert map to array\nconst result = Object.values(unique);\n\n// Fallback for IF node\nif (result.length === 0) {\n  return [{\n    json: {\n      hasMatch: false\n    }\n  }];\n}\n\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        128
+      ],
+      "id": "79b08474-0118-4657-afca-3e8d79c8a368",
+      "name": "Filter Page 5",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ab6b0462-4ea4-4378-af1b-b386b7a9aa2f",
+              "leftValue": "={{ $json.hasMatch }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "74e0b7bc-e366-4e04-8425-727e2726f435",
+              "leftValue": "={{ $json.session_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1440,
+        128
+      ],
+      "id": "6d15e8be-7db2-4320-94a8-7364c8ee28b5",
+      "name": "Next Page 5"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        384,
+        -224
+      ],
+      "id": "d3cdb9f4-4e17-4482-9bc6-35da3023cd70",
+      "name": "Stop"
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1792,
+        -384
+      ],
+      "id": "ed9e7f8e-aa51-4820-ad2e-69e465baaaff",
+      "name": "Merge All"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.example.com/v1/website/WEBSITE_ID/conversation/{{ $json.session_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "order_date_created",
+              "value": "asc"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Crisp-Tier",
+              "value": "plugin"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2160,
+        -336
+      ],
+      "id": "60855008-a676-40c5-9a76-b66877a31ce6",
+      "name": "Fetch Conversation",
+      "retryOnFail": false,
+      "maxTries": 2,
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API Credentials"
+        },
+        "httpBasicAuth": {
+          "id": "REMOVED",
+          "name": "Chat API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2368,
+        -336
+      ],
+      "id": "e7bc56c9-99d5-40fe-b119-5d343debbe6c",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are given a full user–support conversation.\n\nAnalyze the entire conversation and identify the single primary problem the user is trying to resolve.\n\nOutput exactly one concise sentence that:\nDescribes only the user’s core issue, not support responses or outcomes\nReflects the main recurring or dominant problem, even if the user mentions multiple details\nUses specific, concrete language (avoid vague phrasing)\nIs written from the user’s perspective\n\nDo NOT include:\nSolutions, explanations, apologies, or internal actions\nSecondary or unrelated issues\nConversation metadata or formatting\nBullet points, labels, or extra commentary\n\nInput conversation:\n{{ $('Merge Conversation').item.json.conversation }}\n\nOutput:\nOne clear sentence summarizing the user’s core problem."
+            },
+            {
+              "role": "system",
+              "content": "You are an expert at summarizing user's customer support conversations."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        3520,
+        -320
+      ],
+      "id": "633f9c83-cea5-481d-9ef3-0160d70c7164",
+      "name": "get_summary",
+      "credentials": {
+        "openAiApi": {
+          "id": "REMOVED",
+          "name": "OpenAI API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3200,
+        -336
+      ],
+      "id": "6990252d-a851-4410-9b99-7766a5cef140",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "summary",
+              "renameField": true,
+              "outputFieldName": "summeries"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3744,
+        -592
+      ],
+      "id": "125ee309-09a3-4363-82f3-5985b543eb3b",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are given a list of chat issue summaries.\n\nGroup the summaries into distinct, specific issue categories based strictly on the user problems described.\n\nCategorization rules:\nEach summary must be assigned to exactly one category\nCategory names must be clear, specific, and human-readable\nDo NOT use vague labels such as “Other”, “General”, or “Miscellaneous”\nDo NOT split the same underlying issue into multiple categories due to wording differences\nDo NOT invent categories not supported by the summaries\n\nFor each category:\nProvide the category name\nProvide the exact count of summaries in that category\n\nOutput requirements:\nRank categories by count in descending order\nOutput only a clean Markdown list\nNo explanations, comments, examples, or extra text\n\nInput summaries:\n{{ $json.summeries.join(\"\\n- \") }}\n"
+            },
+            {
+              "role": "system",
+              "content": "You are an expert in customer support chat analysis."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        3920,
+        -592
+      ],
+      "id": "7d47fb21-bd52-4951-9245-6271e8f481e3",
+      "name": "get_category_count",
+      "credentials": {
+        "openAiApi": {
+          "id": "REMOVED",
+          "name": "OpenAI API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "024da248-aca3-451f-9e4d-2aa1e19dc622",
+              "name": "final_output",
+              "value": "=# Weekly Support Insights - \nReporting Period: {{ $('Get Date 1').first().json.report_period }}\nTotal Tickets Analyzed: {{ $('Fetch Conversation').all().length}}\n\n## Top Issues\n\n{{ $json.output[0].content[0].text }}\n",
+              "type": "string"
+            },
+            {
+              "id": "6b6bf1f0-7c14-4179-b06c-7f7d6771f963",
+              "name": "final_summary",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "c7bc5357-6262-496d-bf51-65986b951fab",
+              "name": "chat_count",
+              "value": "={{ $('Fetch Conversation').all().length}}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4288,
+        -592
+      ],
+      "id": "bee94eac-c921-4fbb-ade3-91fce79a7823",
+      "name": "final_data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9c01e5e8-2429-4fb4-8688-9e8cb2a888eb",
+              "name": "start_ts",
+              "value": "={{ $('Get Date 1').first().json.start_ts }}",
+              "type": "number"
+            },
+            {
+              "id": "bc938fe6-a32e-4f68-9424-74767ea8e359",
+              "name": "end_ts",
+              "value": "={{ $('Get Date 1').first().json.end_ts }}",
+              "type": "number"
+            },
+            {
+              "id": "c9326c5d-000d-472e-8639-eb0af4f5e10b",
+              "name": "report_period",
+              "value": "={{ $('Get Date 1').first().json.report_period }}",
+              "type": "string"
+            },
+            {
+              "id": "beb12ed6-57a7-407f-aae3-2f8461b1bbec",
+              "name": "session_id",
+              "value": "={{ $json.session_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1984,
+        -336
+      ],
+      "id": "572cf571-0e82-4b49-8e9c-cfeccc0eb10b",
+      "name": "Set Data to Fetch Conversation"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1a233a84-0e47-420e-9057-4687634c542b",
+              "leftValue": "={{ $json.from }}",
+              "rightValue": "=user",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        2576,
+        -336
+      ],
+      "id": "3b84a080-096d-4c15-bca6-c1126a2f1d41",
+      "name": "Filter User Message"
+    },
+    {
+      "parameters": {
+        "jsCode": "const grouped = {};\n\n// Step 1: Group messages by session_id\nfor (const item of items) {\n  const { session_id, user_name, message, timestamp } = item.json;\n\n  // Skip invalid messages\n  if (!session_id || !message) continue;\n\n  if (!grouped[session_id]) {\n    grouped[session_id] = {\n      session_id,\n      user_name,\n      messages: []\n    };\n  }\n\n  grouped[session_id].messages.push({\n    text: message,\n    timestamp\n  });\n}\n\n// Step 2: Sort messages and build conversation text + time range\nconst mergedConversations = Object.values(grouped).map(g => {\n  // Sort chronologically\n  g.messages.sort((a, b) => a.timestamp - b.timestamp);\n\n  const conversationText = g.messages.map(m => m.text).join('\\n');\n\n  // Calculate start and end time\n  const startTimestamp = g.messages[0].timestamp;\n  const endTimestamp = g.messages[g.messages.length - 1].timestamp;\n\n  const start_time = new Date(startTimestamp).toISOString();\n  const end_time = new Date(endTimestamp).toISOString();\n\n  return {\n    json: {\n      session_id: g.session_id,\n      user_name: g.user_name,\n      conversation: conversationText,\n      start_time,\n      end_time\n    }\n  };\n});\n\n// Step 3: Return final array\nreturn mergedConversations;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2992,
+        -336
+      ],
+      "id": "4a6edd19-5207-4f63-83bc-a8df2fff627d",
+      "name": "Merge Conversation"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a5d13403-eb5f-482a-b670-eb3b1aa5bd5c",
+              "name": "session_id",
+              "value": "={{ $json.session_id }}",
+              "type": "string"
+            },
+            {
+              "id": "b4f7031f-d8a6-4dd5-9b35-b2ebff6547bd",
+              "name": "user_name",
+              "value": "={{ $json.user.nickname }}",
+              "type": "string"
+            },
+            {
+              "id": "11b32ca0-f3d1-4d52-bf14-3022d9696168",
+              "name": "message",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "84e83834-8f31-41cd-82ff-2513bd3efde6",
+              "name": "timestamp",
+              "value": "={{ $json.timestamp }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2784,
+        -336
+      ],
+      "id": "605a3367-c65f-4e40-920e-c605a6ed4111",
+      "name": "Set Data to Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7480b2ad-eeae-49d0-91b3-9e39b2e0cd91",
+              "name": "session_id",
+              "value": "={{ $('Merge Conversation').item.json.session_id }}",
+              "type": "string"
+            },
+            {
+              "id": "dc2c24e9-d5eb-411d-9e69-1b398ea744ca",
+              "name": "user_name",
+              "value": "={{ $('Merge Conversation').item.json.user_name }}",
+              "type": "string"
+            },
+            {
+              "id": "9bff0929-4ded-47ca-a468-f523e87efa3a",
+              "name": "conversation",
+              "value": "={{ $('Merge Conversation').item.json.conversation }}",
+              "type": "string"
+            },
+            {
+              "id": "83b2c021-30de-4195-8fcf-ccc1a5ae7ea4",
+              "name": "summary",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "bbd535c1-56ee-4555-983e-4de742d366f7",
+              "name": "report_period",
+              "value": "={{ $('Get Date 1').first().json.report_period }}",
+              "type": "string"
+            },
+            {
+              "id": "92cce748-0939-43f1-ba92-fcee3e51c8d8",
+              "name": "chat_url",
+              "value": "=https://app.example.com/website/WEBSITE_ID/inbox/{{ $('Merge Conversation').item.json.session_id }}",
+              "type": "string"
+            },
+            {
+              "id": "135f9263-fb6d-4835-9f84-1739de7de4be",
+              "name": "chat_timestamp",
+              "value": "={{ $('Merge Conversation').item.json.start_time }} to {{ $('Merge Conversation').item.json.end_time }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3328,
+        -592
+      ],
+      "id": "89ab3894-57a1-4acd-a371-98e6c35e908e",
+      "name": "Set Data for Summary"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "REMOVED",
+          "mode": "list",
+          "cachedResultName": "Weekly Chats",
+          "cachedResultUrl": "/projects/PROJECT_ID/datatables/DATATABLE_ID"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "user_name": "={{ $json.user_name }}",
+            "conversation": "={{ $json.conversation }}",
+            "session_id": "={{ $json.session_id }}",
+            "chat_url": "={{ $json.chat_url }}",
+            "report_period": "={{ $json.report_period }}",
+            "chat_timestamp": "={{ $json.chat_timestamp }}",
+            "summary": "={{ $json.summary }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "report_period",
+              "displayName": "report_period",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "chat_timestamp",
+              "displayName": "chat_timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "chat_url",
+              "displayName": "chat_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "user_name",
+              "displayName": "user_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "conversation",
+              "displayName": "conversation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3536,
+        -592
+      ],
+      "id": "e9a27387-aee0-4bf0-ab46-7ca8ed09b89e",
+      "name": "Weekly Chat"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "REMOVED",
+          "mode": "list",
+          "cachedResultName": "Weekly Chat Summary",
+          "cachedResultUrl": "/projects/PROJECT_ID/datatables/DATATABLE_ID"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "report_period": "={{ $('Get Date 1').first().json.report_period }}",
+            "chat_count": "={{ $json.chat_count }}",
+            "final_summary": "={{ $json.final_summary }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "report_period",
+              "displayName": "report_period",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "chat_count",
+              "displayName": "chat_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "final_summary",
+              "displayName": "final_summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        4496,
+        -592
+      ],
+      "id": "2026584a-6672-4e45-bbb4-f873a70a5cf7",
+      "name": "Weekly Chat Summary"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3872,
+        -320
+      ],
+      "id": "e7a6e7fd-c230-4392-a824-9b9803adb7b1",
+      "name": "Wait",
+      "webhookId": "96432b2e-6750-4be4-a81b-6528834b5bad"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                5
+              ],
+              "triggerAtHour": 18
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        -784
+      ],
+      "id": "32c19771-4fab-4744-ba9d-0939ca751290",
+      "name": "Start"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Fetch Page 1": {
+      "main": [
+        [
+          {
+            "node": "Split Page 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Page 1": {
+      "main": [
+        [
+          {
+            "node": "Next Page 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Page 1": {
+      "main": [
+        [
+          {
+            "node": "Filter Page 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Page 2": {
+      "main": [
+        [
+          {
+            "node": "Filter Page 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Page 2": {
+      "main": [
+        [
+          {
+            "node": "Split Page 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Date 1": {
+      "main": [
+        [
+          {
+            "node": "Fetch Page 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Next Page 1": {
+      "main": [
+        [
+          {
+            "node": "Stop",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Date 2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge All",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Date 2": {
+      "main": [
+        [
+          {
+            "node": "Fetch Page 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Page 2": {
+      "main": [
+        [
+          {
+            "node": "Next Page 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Page 3": {
+      "main": [
+        [
+          {
+            "node": "Filter Page 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Page 3": {
+      "main": [
+        [
+          {
+            "node": "Split Page 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Date 3": {
+      "main": [
+        [
+          {
+            "node": "Fetch Page 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Page 3": {
+      "main": [
+        [
+          {
+            "node": "Next Page 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Page 4": {
+      "main": [
+        [
+          {
+            "node": "Filter Page 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Page 4": {
+      "main": [
+        [
+          {
+            "node": "Split Page 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Date 4": {
+      "main": [
+        [
+          {
+            "node": "Fetch Page 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Page 4": {
+      "main": [
+        [
+          {
+            "node": "Next Page 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Next Page 2": {
+      "main": [
+        [
+          {
+            "node": "Stop",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Date 3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge All",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Next Page 3": {
+      "main": [
+        [
+          {
+            "node": "Stop",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Date 4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge All",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Split Page 5": {
+      "main": [
+        [
+          {
+            "node": "Filter Page 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Page 5": {
+      "main": [
+        [
+          {
+            "node": "Split Page 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Date 5": {
+      "main": [
+        [
+          {
+            "node": "Fetch Page 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Page 5": {
+      "main": [
+        [
+          {
+            "node": "Next Page 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Next Page 4": {
+      "main": [
+        [
+          {
+            "node": "Stop",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Date 5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge All",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Next Page 5": {
+      "main": [
+        [
+          {
+            "node": "Stop",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge All",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Merge All": {
+      "main": [
+        [
+          {
+            "node": "Set Data to Fetch Conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Conversation": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter User Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Set Data for Summary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get_summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_summary": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "get_category_count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_category_count": {
+      "main": [
+        [
+          {
+            "node": "final_data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "final_data": {
+      "main": [
+        [
+          {
+            "node": "Weekly Chat Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Data to Fetch Conversation": {
+      "main": [
+        [
+          {
+            "node": "Fetch Conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter User Message": {
+      "main": [
+        [
+          {
+            "node": "Set Data to Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Conversation": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Data to Merge": {
+      "main": [
+        [
+          {
+            "node": "Merge Conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Data for Summary": {
+      "main": [
+        [
+          {
+            "node": "Weekly Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly Chat": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Get Date 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "7b54a42e-cc28-434d-ba2f-ca1b0e591f29",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "REMOVED"
+  },
+  "id": "REMOVED",
+  "tags": []
+}

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import styles from "./style.module.scss";
 import { opacity, background } from "./anim";
@@ -48,7 +49,14 @@ const Header = ({ loader }: HeaderProps) => {
       >
       </div> */}
       <div className={cn(styles.bar, "flex items-center justify-between")}>
-        <Link href="/" className="flex items-center justify-center">
+        <Link href="/" className="flex items-center justify-center gap-1.5">
+          <Image
+            src="/assets/me.jpg"
+            alt={config.author}
+            width={40}
+            height={40}
+            className="rounded-full border border-border"
+          />
           <Button variant={"link"} className="text-md">
             {config.author}
           </Button>

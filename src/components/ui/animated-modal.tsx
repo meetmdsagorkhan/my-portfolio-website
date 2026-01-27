@@ -68,7 +68,7 @@ export const ModalBody = ({
   children: ReactNode;
   className?: string;
 }) => {
-  const { open } = useModal();
+  const { open, setOpen } = useModal();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -76,7 +76,7 @@ export const ModalBody = ({
         if (e.key === "Escape") setOpen(false);
       });
     }
-  }, []);
+  }, [setOpen]);
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -86,7 +86,6 @@ export const ModalBody = ({
   }, [open]);
 
   const modalRef = useRef(null);
-  const { setOpen } = useModal();
   useOutsideClick(modalRef, () => setOpen(false));
 
   return (
@@ -104,14 +103,14 @@ export const ModalBody = ({
             opacity: 0,
             backdropFilter: "blur(0px)",
           }}
-          className="modall fixed [perspective:800px] [transform-style:preserve-3d] inset-0 h-full w-full  flex items-center justify-center z-50"
+          className="modall fixed [perspective:800px] [transform-style:preserve-3d] inset-0 h-full w-full flex items-center justify-center z-50 pointer-events-none"
         >
           <Overlay />
 
           <motion.div
             ref={modalRef}
             className={cn(
-              "min-h-[50%] max-h-[90%] md:max-w-[40%] bg-white dark:bg-neutral-950 border border-transparent dark:border-neutral-800 md:rounded-2xl relative z-50 flex flex-col flex-1 overflow-hidden",
+              "min-h-[50%] max-h-[90%] md:max-w-[40%] bg-white dark:bg-neutral-950 border border-transparent dark:border-neutral-800 md:rounded-2xl relative z-50 flex flex-col flex-1 overflow-hidden pointer-events-auto",
               className
             )}
             initial={{
@@ -138,7 +137,7 @@ export const ModalBody = ({
             }}
           >
             <CloseIcon />
-            <ScrollArea className="h-[80dvh] w-full rounded-md border">
+            <ScrollArea className="h-[80dvh] w-full rounded-md border scroll-smooth">
               {children}
             </ScrollArea>
           </motion.div>
@@ -196,7 +195,7 @@ const Overlay = ({ className }: { className?: string }) => {
         opacity: 0,
         backdropFilter: "blur(0px)",
       }}
-      className={`modal-overlay fixed inset-0 h-full w-full bg-black bg-opacity-50 z-50 ${className}`}
+      className={`modal-overlay fixed inset-0 h-full w-full bg-black bg-opacity-50 z-50 pointer-events-auto ${className}`}
       onClick={() => setOpen(false)}
     ></motion.div>
   );

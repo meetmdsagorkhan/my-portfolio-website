@@ -1,0 +1,536 @@
+{
+  "name": "Zendesk Automation (New Tickets)",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {
+          "dimensions": 1536
+        }
+      },
+      "id": "624b3239-5cf0-438f-951c-1a2fa492cb02",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -1408,
+        672
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "REMOVED",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.description }}",
+        "options": {
+          "systemMessage": "=Act as a world-class professional support assistant specializing in customer support using only the provided company knowledge base documents. Given the following context, criteria, and instructions, generate concise, formal customer-facing replies to incoming support requests that strictly follow response rules and constraints.\n\n## Context\n- Incoming request data is provided as JSON with at least these fields: {{ $json.requester_name }}, {{ $json.closing }}, and a free-text customer message (field name may be \"message\" or similar). Additional metadata may be present (account type, request type); rely primarily on the customer message and the knowledge base documents.\n- Access to and allowance to use only the provided knowledge base documents. No external sources or assumptions allowed.\n- The knowledge base may contain paragraphs, numbered steps, or bullet lists. Preserve list structure only when the KB presents it.\n- System footers about Google Groups subscriptions must be ignored and not referenced.\n\n## Approach\n1. Classify the incoming message into one of these categories in this order:\n   - OTP issue (customer reports not receiving OTP or OTP failures).\n   - Account/email change request (explicit request to change registered email).\n   - Account/Card/UTC deletion request (explicit request to delete account, USD account, or Card).\n   - KYC / pending / approval status or refund requests.\n   - Other support queries where an authoritative answer exists in the provided knowledge base.\n2. Apply strict handling per category:\n   - If OTP issue: produce no reply (silence). Do not generate any customer-facing text for OTP-related queries.\n   - If Email Change Request: reply exactly with the required sentence (see Instructions).\n   - If Account/Card Deletion: if customer message does not include a deletion reason, ask only for the reason. Always include an explicit irreversible notice and conclude by informing that a human agent will get back shortly. Do not add any other follow-up questions or instructions. Use only KB-supported wording for any factual details; otherwise limit content to required deletion handling text and KB excerpts if present.\n   - If KYC / pending / approval status / refunds or if no relevant KB information exists: reply exactly with the required fallback message (see Instructions) and nothing else.\n   - For all other queries: craft a concise, formal answer using only information available in the KB. Do not invent procedures, timelines, or requirements not present in the KB.\n3. Maintain tone: formal, concise, and professional. Emphasize key terms using bold formatting only where emphasis is needed.\n4. If attachments are mentioned in the message, note in the reply that a human agent will review them if necessary, but only if relevant to the category.\n\n## Response Format\n- Start every reply with the exact salutation line:\n  Dear {{ $json.requester_name }},\n- Use paragraph form for general information. Do not split information into multiple short paragraphs unless logically necessary.\n- Use **bold** text for emphasis on key terms only.\n- Use numbered lists (1, 2, 3...) only when explaining sequential steps or procedures that are present in the KB and required to be delivered as steps.\n- Use bullet points (•) only if the source knowledge base presents the data as a list; otherwise do not introduce bullets.\n- End every reply with the exact closing token on a new line:\n  {{ $json.closing }}\n- Replies must be concise and limited to what the KB supports and the strict constraints below.\n\n## Instructions\n- Always follow the strict constraints below without deviation.\n- OTP Issues:\n  - If the customer query pertains to OTP delivery, generation, or failures, do not produce any output. Silence is required.\n  - Note for internal logic only: customers receive OTPs via phone for card transactions; email OTPs are not supported. Do not include this note in replies unless the KB explicitly contains it.\n- Email Change Requests:\n  - If the customer requests changing the registered email address, reply exactly with this single sentence (and nothing else besides salutation and closing):\n    For security reasons, it is not possible to change the registered email address after approval.\n  - Preserve exact punctuation and capitalization.\n- Account/Card/USD Account Deletion:\n  - If deletion is requested and no reason is provided in the customer message, ask only for the reason for deletion. Do not ask any other questions.\n  - Always include this exact sentence somewhere in the body: Please note that this action is irreversible.\n  - Conclude the reply by informing the customer that a human agent will get back to them shortly (use the phrase: a human agent will get back to you shortly.). No additional commitments or timelines.\n  - If the KB contains specific account deletion prerequisites or steps, include them verbatim or summarized only if present in KB; otherwise limit message to the required reason request, irreversible notice, and human agent handoff.\n- Restricted Topics / Fallback:\n  - If the query concerns KYC, pending/approval status, or refunds, or if no relevant information is found in the knowledge base for the query, reply exactly with this message and nothing else (except salutation and closing must be present as required by Response Format):\n    Dear {{ $json.requester_name }},\n    \n    Thank you for reaching out. I don't have all the details to resolve your query right now, but our support team will get back to you shortly.\n    \n    Warm regards, Support AI\n  - Do not add additional sentences, clarifications, or signoffs.\n- No Fabrications:\n  - Do not invent procedures, steps, timelines, or policy details not present in the KB.\n  - Do not add extra follow-up questions beyond a deletion-reason prompt when required.\n- Use Only KB Content:\n  - Answers must be derived solely from provided knowledge base documents. Paraphrase KB content when appropriate but do not add unverified details.\n- Formatting Constraints Recap:\n  - Salutation and closing must match templates exactly.\n  - Bold only for key terms; numbered lists only for sequential steps; bullets only if KB originally used bullets.\n- Error Handling:\n  - If message classification is ambiguous between OTP and another category, treat it as OTP and produce no output.\n  - If classification is ambiguous between KYC/pending/refund and other topics and KB does not clearly resolve it, use the Restricted Topics / Fallback exact message.\n- Output expectations:\n  - Produce a single customer-facing reply that conforms to the Response Format and Instructions above, or produce no output if OTP issue classification applies.\n- Do not include any internal notes, debugging text, or explanations in the reply."
+        }
+      },
+      "id": "e71d8e04-6b0e-4bb1-b742-ef91d8782bf8",
+      "name": "RAG AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -1584,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "25805d3b-0939-4a89-911f-1feb64dc1f70",
+      "name": "Supabase Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        -1488,
+        464
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "REMOVED",
+          "name": "Supabase"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "=content_en",
+        "description": "Contains all knowledge base articles you can refer to when answering user questions. Always use this content to provide accurate and helpful responses.",
+        "topK": 8
+      },
+      "id": "700675aa-a9db-448d-89a5-22108c166d33",
+      "name": "Retrieve Knowledge Base",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        -1376,
+        256
+      ],
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "zendesk_new_ticket",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -2080,
+        32
+      ],
+      "id": "250073f3-c319-4516-8318-d0a6327fa19c",
+      "name": "Get New Tickets",
+      "webhookId": "8c5e6844-f04b-4468-a085-fbb150d16ad8"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d6e2c443-75f2-40ed-a8b3-5fdb1bfd8dab",
+              "name": "timestamp",
+              "value": "={{new Date().toLocaleString(\"en-BD\", { timeZone: \"Asia/Dhaka\", dateStyle: \"medium\", timeStyle: \"short\" })}}",
+              "type": "string"
+            },
+            {
+              "id": "b4b50999-2418-4d87-b249-5a06ca1ed177",
+              "name": "ticket_id",
+              "value": "={{ $json.body.ticket_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ef963dce-fbda-4ed6-88bc-04690ccfd944",
+              "name": "ticket_status",
+              "value": "={{ $json.body.ticket_status }}",
+              "type": "string"
+            },
+            {
+              "id": "e6e9d0dc-0911-4122-b9c2-c6a2d569285a",
+              "name": "requester_id",
+              "value": "={{ $json.body.requester_id }}",
+              "type": "string"
+            },
+            {
+              "id": "9049bbc0-1887-426a-b382-1daf13d29fa2",
+              "name": "requester_name",
+              "value": "={{ $json.body.requester_name }}",
+              "type": "string"
+            },
+            {
+              "id": "f7ab9fc4-c991-4b88-8669-b59452cfd82e",
+              "name": "requester_email ",
+              "value": "={{ $json.body.requester_email }}",
+              "type": "string"
+            },
+            {
+              "id": "d95b7b6e-6d13-4d2a-8485-2490f586e521",
+              "name": "subject",
+              "value": "={{ $json.body.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "3b599ded-c5e0-42a6-811b-8ebb36729e99",
+              "name": "description",
+              "value": "={{ \n  ($json.body.description || \"\")\n    .split('\\n\\n')\n    .slice(2)                   \n    .join('\\n\\n')\n    .replace(/\\n*Attachment\\(s\\):.*/s, '')\n    .trim()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "e7999743-cb8f-4ddc-a7a0-27162c6ea28d",
+              "name": "closing",
+              "value": "=Warm regards,  \nSupport AI  \n\nReply \"Talk with a human\" to chat with an agent, or call us at [SUPPORT_PHONE].",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1856,
+        32
+      ],
+      "id": "3f25c2b2-f72d-40df-82cd-f83aaa1cf59f",
+      "name": "Extract New Ticket"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "5767ce5a-266b-4bca-938f-8d040c74c66f",
+      "name": "Send Reply From Memory",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -1632,
+        256
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "REMOVED",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "d1a2f5a7-929c-4618-af6f-1a16dfdb5b69",
+      "name": "Send Reply From KB",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -1200,
+        464
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "REMOVED",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e7ea5fa7-74a1-4359-a0c9-06534bc7d9df",
+              "leftValue": "={{ $('RAG AI Agent').item.json.output }}",
+              "rightValue": "will get back to you shortly",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -992,
+        32
+      ],
+      "id": "55fd01b0-f0e4-41bd-b087-bdc8f29e2c5a",
+      "name": "If No Relevant KB Found"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://example.zendesk.com/api/v2/tickets/{{ $('Extract New Ticket').first().json.ticket_id }}/tags.json",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"tags\": [\"human_requested\"]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -768,
+        32
+      ],
+      "id": "e06f32de-242f-4d29-ac38-0702bde5dba2",
+      "name": "Add Tags (human_requested)",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://example.zendesk.com/api/v2/tickets/{{ $('Extract New Ticket').first().json.ticket_id }}/tags.json",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zendeskApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"tags\": [\"ai_reply\"]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -544,
+        128
+      ],
+      "id": "ef5a80c0-2d25-4c73-9b07-066edbe687db",
+      "name": "Add Tags (ai_reply)",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Extract New Ticket').item.json.ticket_id }}",
+        "updateFields": {
+          "publicReply": "={{ $json.output }}",
+          "status": "open"
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        320
+      ],
+      "id": "c1c40f5e-9c82-491c-8827-49b9ecfbe264",
+      "name": "Send AI Reply",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -768,
+        224
+      ],
+      "id": "e8df597e-1f07-41a8-acc9-3c7395a87da7",
+      "name": "Wait 10 Sec",
+      "webhookId": "605d76b0-e011-4b63-bde3-3be13988ad23"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Extract New Ticket').item.json.ticket_id }}",
+        "updateFields": {
+          "publicReply": "={{ $json.output }}",
+          "status": "open"
+        }
+      },
+      "type": "n8n-nodes-base.zendesk",
+      "typeVersion": 1,
+      "position": [
+        -768,
+        -160
+      ],
+      "id": "511eee7a-6bff-45ca-a414-eba0eb03814f",
+      "name": "AI Reply (Not Confident)",
+      "credentials": {
+        "zendeskApi": {
+          "id": "REMOVED",
+          "name": "Zendesk API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.ticket_id }}",
+        "tableName": "zendesk_ticket_histories"
+      },
+      "id": "2ddea62e-858a-498f-b352-26d144e0a5cf",
+      "name": "Postgres Ticket Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1,
+      "position": [
+        -1488,
+        256
+      ],
+      "notesInFlow": false,
+      "credentials": {
+        "postgres": {
+          "id": "REMOVED",
+          "name": "Postgres (Supabase)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RAG AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If No Relevant KB Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Retrieve Knowledge Base",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get New Tickets": {
+      "main": [
+        [
+          {
+            "node": "Extract New Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract New Ticket": {
+      "main": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reply From Memory": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reply From KB": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Retrieve Knowledge Base",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If No Relevant KB Found": {
+      "main": [
+        [
+          {
+            "node": "Add Tags (human_requested)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Reply (Not Confident)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 10 Sec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 10 Sec": {
+      "main": [
+        [
+          {
+            "node": "Add Tags (ai_reply)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send AI Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Ticket Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "542e5e5c-59a1-4878-aff6-0b99850b0034",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "513dd4a16179a0f69370a160bc098697921c3c85d88ed306fa8ad565e8b80322"
+  },
+  "id": "F11sfSBNM8y6IYJy"
+}
